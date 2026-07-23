@@ -124,6 +124,16 @@ app.post('/admin/sparepart/save', isAdmin, async (req, res) => {
         res.status(500).send('Gagal menyimpan sparepart: ' + err.message);
     }
 });
+// ROUTE HAPUS SPAREPART
+app.post('/admin/sparepart/delete/:id', isAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Sparepart.findByIdAndDelete(id);
+        res.redirect('/admin/sparepart');
+    } catch (err) {
+        res.status(500).send('Gagal menghapus sparepart: ' + err.message);
+    }
+});
 
 // ROUTE TAMBAH / KURANG QTY STOK SPAREPART
 app.post('/admin/sparepart/update-stok', isAdmin, async (req, res) => {
