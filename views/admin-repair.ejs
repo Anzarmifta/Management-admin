@@ -1,95 +1,306 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Kegiatan Perbaikan - Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTC.SYS — Repair Logs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --radius-ios: 16px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navbar Clean Glassmorphism */
+        .navbar {
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #0f172a !important;
+        }
+
+        /* Card Container */
+        .ios-card {
+            background: var(--card-bg);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-ios);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02);
+        }
+
+        /* Form Controls & Inputs */
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            background-color: #ffffff;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05);
+        }
+
+        /* Buttons Style */
+        .btn {
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-dark {
+            background-color: #0f172a;
+            border: none;
+        }
+        .btn-dark:hover {
+            background-color: #1e293b;
+        }
+        .btn-light-subtle {
+            background-color: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+        .btn-light-subtle:hover {
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+
+        /* Offcanvas Sidebar Kiri ala iOS */
+        .offcanvas {
+            border-top-right-radius: 24px;
+            border-bottom-right-radius: 24px;
+            border: none;
+            box-shadow: 10px 0 40px rgba(15, 23, 42, 0.1);
+        }
+        .offcanvas-header {
+            padding: 24px 24px 10px 24px;
+        }
+        .offcanvas-body {
+            padding: 20px 24px;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            margin-bottom: 6px;
+            transition: all 0.2s;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+        }
+
+        /* Tabel Minimalis */
+        .table {
+            color: var(--text-main);
+            white-space: nowrap;
+            margin-bottom: 0;
+        }
+        .table > thead > tr > th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 14px;
+        }
+        .table > tbody > tr > td {
+            padding: 12px 14px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        /* Modal Styling */
+        .modal-content {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+        }
+        .modal-header, .modal-footer {
+            border-color: #f1f5f9;
+            padding: 18px 20px;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-dark bg-dark px-4 navbar-expand">
-        <span class="navbar-brand mb-0 h1">Admin Panel</span>
-        <div class="navbar-nav ms-auto">
-            <a href="/admin/sparepart" class="nav-link">Sparepart</a>
-            <a href="/admin/repair" class="nav-link active fw-bold">Kegiatan Perbaikan</a>
-            <a href="/logout" class="btn btn-outline-light btn-sm ms-3">Logout</a>
+<body>
+
+    <nav class="navbar navbar-expand px-4 sticky-top">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-light-subtle d-flex align-items-center justify-content-center p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#leftSidebar" aria-controls="leftSidebar" style="width: 38px; height: 38px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                </svg>
+            </button>
+            <span class="navbar-brand mb-0 h1">MTC.SYS</span>
+        </div>
+        <div class="navbar-nav ms-auto align-items-center">
+            <span class="text-muted small d-none d-sm-inline">Admin Panel</span>
         </div>
     </nav>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="leftSidebar" aria-labelledby="leftSidebarLabel" style="width: 280px;">
+        <div class="offcanvas-header border-0 pb-0">
+            <h5 class="offcanvas-title fw-bold" id="leftSidebarLabel">MTC.SYS</h5>
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-between">
+            <div>
+                <p class="text-muted small mb-3 px-2">Menu Navigasi</p>
+                <div class="list-unstyled">
+                    <a href="/admin/sparepart" class="sidebar-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam me-3" viewBox="0 0 16 16">
+                            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+                        </svg>
+                        Sparepart Inventory
+                    </a>
+                    <a href="/admin/repair" class="sidebar-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tools me-3" viewBox="0 0 16 16">
+                            <path d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.618 2.64A3 3 0 1 0 4 15.357l2.64-2.618 2.675 2.675a1 1 0 0 1 .293.707v.071a1 1 0 0 0 .419.815L15 16l1-1-3.5-3.5L12 10l-4-4 .5-1.5L9 3 1 0z"/>
+                        </svg>
+                        Repair Logs
+                    </a>
+                </div>
+            </div>
+            <div class="pt-3 border-top">
+                <a href="/logout" class="sidebar-item text-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left me-3" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
+                        <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
     <div class="container my-4">
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card p-3 shadow-sm h-100">
-                    <h5>Buat Akun User Baru</h5>
-                    <form action="/admin/user/add" method="POST" class="row g-2 mt-1">
-                        <div class="col-md-4"><input type="text" name="username" class="form-control form-control-sm" placeholder="Username" required></div>
-                        <div class="col-md-4"><input type="password" name="password" class="form-control form-control-sm" placeholder="Password" required></div>
-                        <div class="col-md-2">
-                            <select name="role" class="form-control form-control-sm">
+        
+        <div class="row g-4 mb-4">
+            <div class="col-12 col-lg-6">
+                <div class="ios-card p-4 h-100">
+                    <h6 class="fw-bold mb-3">Buat Akun User Baru</h6>
+                    <form action="/admin/user/add" method="POST" class="row g-2">
+                        <div class="col-12 col-sm-4">
+                            <input type="text" name="username" class="form-control" placeholder="Username" required autocomplete="off">
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <input type="password" name="password" class="form-control" placeholder="Password" required>
+                        </div>
+                        <div class="col-6 col-sm-2">
+                            <select name="role" class="form-select">
                                 <option value="teknisi">Teknisi</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
-                        <div class="col-md-2"><button type="submit" class="btn btn-secondary btn-sm w-100">Buat</button></div>
+                        <div class="col-6 col-sm-2">
+                            <button type="submit" class="btn btn-dark w-100">Buat</button>
+                        </div>
                     </form>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card p-3 shadow-sm h-100">
-                    <h5>Export Laporan Perbaikan ke Excel</h5>
-                    <form action="/admin/repair/export" method="GET" class="row g-2 mt-1">
-                        <div class="col-md-4"><input type="date" name="startDate" class="form-control form-control-sm" required></div>
-                        <div class="col-md-4"><input type="date" name="endDate" class="form-control form-control-sm" required></div>
-                        <div class="col-md-4"><button type="submit" class="btn btn-success btn-sm w-100">Download</button></div>
+            <div class="col-12 col-lg-6">
+                <div class="ios-card p-4 h-100">
+                    <h6 class="fw-bold mb-3">Export Laporan Perbaikan</h6>
+                    <form action="/admin/repair/export" method="GET" class="row g-2">
+                        <div class="col-12 col-sm-4">
+                            <input type="date" name="startDate" class="form-control" required>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <input type="date" name="endDate" class="form-control" required>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <button type="submit" class="btn btn-light-subtle text-success w-100 fw-semibold">Download Excel</button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <div class="card p-3 shadow-sm mb-4">
+        <div class="ios-card p-4 mb-4">
             <form action="/admin/repair" method="GET" class="row g-3 align-items-end">
-                <input type="hidden" name="filterType" value="month" id="filterTypeInput">
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">Filter Berdasarkan:</label>
-                    <select id="selectorType" class="form-control" onchange="toggleFilter(this.value)">
+                <input type="hidden" name="filterType" value="<%= filterType %>" id="filterTypeInput">
+                <div class="col-12 col-md-3">
+                    <label class="form-label text-muted small fw-semibold">Filter Berdasarkan:</label>
+                    <select id="selectorType" class="form-select" onchange="toggleFilter(this.value)">
                         <option value="all" <%= filterType=='all'?'selected':'' %>>Semua Data</option>
                         <option value="month" <%= filterType=='month'?'selected':'' %>>Per Bulan</option>
                         <option value="week" <%= filterType=='week'?'selected':'' %>>Per Minggu (Rentang Tanggal)</option>
                     </select>
                 </div>
-                <div class="col-md-3" id="monthBox" style="display: <%= filterType=='month'?'block':'none' %>;">
-                    <label class="form-label">Pilih Bulan</label>
+                <div class="col-12 col-md-3" id="monthBox" style="display: <%= filterType=='month'?'block':'none' %>;">
+                    <label class="form-label text-muted small fw-semibold">Pilih Bulan</label>
                     <input type="month" name="month" class="form-control" value="<%= month %>">
                 </div>
-                <div class="col-md-3" id="weekStartBox" style="display: <%= filterType=='week'?'block':'none' %>;">
-                    <label class="form-label">Dari Tanggal</label>
+                <div class="col-12 col-md-3" id="weekStartBox" style="display: <%= filterType=='week'?'block':'none' %>;">
+                    <label class="form-label text-muted small fw-semibold">Dari Tanggal</label>
                     <input type="date" name="weekStart" class="form-control" value="<%= weekStart %>">
                 </div>
-                <div class="col-md-3" id="weekEndBox" style="display: <%= filterType=='week'?'block':'none' %>;">
-                    <label class="form-label">Sampai Tanggal</label>
+                <div class="col-12 col-md-3" id="weekEndBox" style="display: <%= filterType=='week'?'block':'none' %>;">
+                    <label class="form-label text-muted small fw-semibold">Sampai Tanggal</label>
                     <input type="date" name="weekEnd" class="form-control" value="<%= weekEnd %>">
                 </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary w-100">Terapkan Filter</button>
+                <div class="col-12 col-md-3">
+                    <button type="submit" class="btn btn-dark w-100">Terapkan Filter</button>
                 </div>
             </form>
         </div>
 
-        <div class="card p-3 shadow-sm">
-            <h4 class="mb-3">Daftar Kegiatan Perbaikan (Semua Teknisi)</h4>
+        <div class="ios-card p-4">
+            <h5 class="fw-bold mb-3" style="letter-spacing: -0.5px;">Daftar Kegiatan Perbaikan</h5>
             <div class="table-responsive">
-                <table class="table table-bordered table-striped table-sm align-middle" style="font-size: 13px;">
-                    <thead class="table-dark">
+                <table class="table align-middle">
+                    <thead>
                         <tr>
-                            <th>Tanggal</th><th>Shift</th><th>Mesin</th><th>Problem</th><th>Analisa</th><th>Perbaikan</th><th>Sparepart Dipakai</th><th>PIC</th><th>Jam</th><th>Status</th><th>Ket</th>
+                            <th>Tanggal</th>
+                            <th>Shift</th>
+                            <th>Mesin</th>
+                            <th>Problem</th>
+                            <th>Analisa</th>
+                            <th>Perbaikan</th>
+                            <th>Sparepart Dipakai</th>
+                            <th>PIC</th>
+                            <th>Jam</th>
+                            <th>Status</th>
+                            <th>Ket</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% if(repairs.length === 0) { %>
-                            <tr><td colspan="11" class="text-center">Belum ada data perbaikan.</td></tr>
+                            <tr><td colspan="11" class="text-center py-4 text-muted">Belum ada data perbaikan.</td></tr>
                         <% } %>
                         <% repairs.forEach(r => { %>
                         <tr>
-                            <td><%= r.tanggal ? r.tanggal.toISOString().split('T')[0] : '' %></td>
+                            <td class="fw-semibold text-secondary"><%= r.tanggal ? r.tanggal.toISOString().split('T')[0] : '' %></td>
                             <td><%= r.shift %></td>
-                            <td><%= r.namaMesin %></td>
+                            <td class="fw-bold text-dark"><%= r.namaMesin %></td>
                             <td><%= r.problem %></td>
                             <td><%= r.analisaPenyebab %></td>
                             <td><%= r.caraPerbaikan %></td>
@@ -107,28 +318,47 @@
                             <td><%= r.pic %></td>
                             <td><%= r.jamMulai %> - <%= r.jamSelesai %></td>
                             <td>
-                                <span class="badge bg-<%= r.status=='ok'?'success':(r.status=='progress'?'warning':'danger') %>">
+                                <span class="badge bg-<%= r.status=='ok'?'success':(r.status=='progress'?'warning':'danger') %> px-2 py-1 rounded-pill fw-medium">
                                     <%= r.status.toUpperCase() %>
                                 </span>
                             </td>
-                            <td><%= r.keterangan %></td>
+                            <td><%= r.keterangan || '-' %></td>
                         </tr>
                         <% }) %>
                     </tbody>
                 </table>
             </div>
 
-            <nav class="mt-3">
-                <ul class="pagination justify-content-center">
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center mb-0">
                     <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
-                        <a class="page-link" href="/admin/repair?page=<%= currentPage - 1 %>&filterType=<%= filterType %>&month=<%= month %>&weekStart=<%= weekStart %>&weekEnd=<%= weekEnd %>">Previous</a>
+                        <a class="page-link border-0 text-dark fw-semibold bg-light rounded-start-pill px-3" href="/admin/repair?page=<%= currentPage - 1 %>&filterType=<%= filterType %>&month=<%= month %>&weekStart=<%= weekStart %>&weekEnd=<%= weekEnd %>">Previous</a>
                     </li>
-                    <li class="page-item disabled"><span class="page-link">Halaman <%= currentPage %> dari <%= totalPages %></span></li>
+                    <li class="page-item disabled">
+                        <span class="page-link border-0 bg-transparent text-muted">Halaman <%= currentPage %> dari <%= totalPages %></span>
+                    </li>
                     <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
-                        <a class="page-link" href="/admin/repair?page=<%= currentPage + 1 %>&filterType=<%= filterType %>&month=<%= month %>&weekStart=<%= weekStart %>&weekEnd=<%= weekEnd %>">Next</a>
+                        <a class="page-link border-0 text-dark fw-semibold bg-light rounded-end-pill px-3" href="/admin/repair?page=<%= currentPage + 1 %>&filterType=<%= filterType %>&month=<%= month %>&weekStart=<%= weekStart %>&weekEnd=<%= weekEnd %>">Next</a>
                     </li>
                 </ul>
             </nav>
+        </div>
+    </div>
+
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 340px;">
+            <div class="modal-content border-0 p-3 text-center">
+                <div class="modal-body">
+                    <div class="mb-3 text-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold mb-2">Pemberitahuan</h5>
+                    <p class="text-muted small mb-4"><%= typeof error !== 'undefined' ? error : '' %></p>
+                    <button type="button" class="btn btn-dark w-100 py-2" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -139,6 +369,13 @@
             document.getElementById('weekStartBox').style.display = val === 'week' ? 'block' : 'none';
             document.getElementById('weekEndBox').style.display = val === 'week' ? 'block' : 'none';
         }
+
+        // Trigger Pop-up Modal jika ada Error/Akses Ditolak
+        <% if(typeof error !== 'undefined' && error) { %>
+        document.addEventListener("DOMContentLoaded", function() {
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        });
+        <% } %>
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
