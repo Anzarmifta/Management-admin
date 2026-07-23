@@ -328,14 +328,46 @@ app.get('/admin/repair', isAdmin, async (req, res) => {
     }
 });
 
+// --- ADMIN: MANAJEMEN AKUN (HALAMAN, TAMBAH, & HAPUS) ---
+app.get('/admin/users', isAdmin, async (req, res) => {
+    try {
+        const users = await User.find();
+        res.render('admin-users', { 
+            user: req.session.user, 
+            users, 
+            error: req.query.error || null 
+        });
+    } catch (err) {
+        res.status(500).render('admin-users', { 
+            user: req.session.user, 
+            users: [], 
+            error: 'Gagal memuat daftar akun: ' + err.message 
+        });
+    }
+});
+
 app.post('/admin/user/add', isAdmin, async (req, res) => {
     try {
         const { username, password, role } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.create({ username, password: hashedPassword, role });
-        res.redirect('/admin/repair');
+        res.redirect('/admin/users');
     } catch (err) {
-        res.status(500).send('Gagal membuat user: ' + err.message);
+        res.redirect('/admin/users?error=' + encodeURIComponent('Gagal membuat user: ' + err.message));
+    }
+});
+
+app.post('/admin/user/delete/:id', isAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        // Mencegah admin menghapus akunnya sendiri yang sedang aktif login
+        if (req.session.user._id === id || req.session.user.id === id) {
+            return res.redirect('/admin/users?error=' + encodeURIComponent('Tidak dapat menghapus akun yang sedang digunakan saat ini!'));
+        }
+        await User.findByIdAndDelete(id);
+        res.redirect('/admin/users');
+    } catch (err) {
+        res.redirect('/admin/users?error=' + encodeURIComponent('Gagal menghapus akun: ' + err.message));
     }
 });
 
