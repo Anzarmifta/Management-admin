@@ -286,22 +286,35 @@ app.post('/admin/sparepart/import', isAdmin, upload.single('fileExcel'), async (
     }
 });
 
-// --- ADMIN: HALAMAN REPAIR ---
+// --- ADMIN: HALAMAN REPAIR & SORTIR ---
 app.get('/admin/repair', isAdmin, async (req, res) => {
     try {
-        let { page, filterType, month, weekStart, weekEnd } = req.query;
+        let { page, filterType, month, weekStart, weekEnd, tanggalFilter, year, namaMesin } = req.query;
         page = parseInt(page) || 1;
         const limit = 20;
         const skip = (page - 1) * limit;
 
         let query = {};
-        const now = new Date();
 
-        if (filterType === 'month') {
-            const targetMonth = month ? new Date(month) : new Date(now.getFullYear(), now.getMonth(), 1);
+        // Filter berdasarkan Nama Mesin
+        if (namaMesin) {
+            query.namaMesin = new RegExp(namaMesin, 'i');
+        }
+
+        // Filter berdasarkan Waktu
+        if (filterType === 'date' && tanggalFilter) {
+            const startDay = new Date(tanggalFilter);
+            const endDay = new Date(tanggalFilter + 'T23:59:59');
+            query.tanggal = { $gte: startDay, $lte: endDay };
+        } else if (filterType === 'month' && month) {
+            const targetMonth = new Date(month);
             const startMonth = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), 1);
             const endMonth = new Date(targetMonth.getFullYear(), targetMonth.getMonth() + 1, 0, 23, 59, 59);
             query.tanggal = { $gte: startMonth, $lte: endMonth };
+        } else if (filterType === 'year' && year) {
+            const startYear = new Date(`${year}-01-01T00:00:00`);
+            const endYear = new Date(`${year}-12-31T23:59:59`);
+            query.tanggal = { $gte: startYear, $lte: endYear };
         } else if (filterType === 'week' && weekStart && weekEnd) {
             query.tanggal = { $gte: new Date(weekStart), $lte: new Date(weekEnd + 'T23:59:59') };
         }
@@ -321,7 +334,10 @@ app.get('/admin/repair', isAdmin, async (req, res) => {
             filterType: filterType || 'all',
             month: month || '',
             weekStart: weekStart || '',
-            weekEnd: weekEnd || ''
+            weekEnd: weekEnd || '',
+            tanggalFilter: tanggalFilter || '',
+            year: year || '',
+            namaMesin: namaMesin || ''
         });
     } catch (err) {
         res.status(500).send(err.message);
