@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const ExcelJS = require('exceljs');
+const multer = require('multer');
 const path = require('path');
 
 if (process.env.NODE_ENV !== 'production') {
@@ -14,6 +15,7 @@ const Sparepart = require('./models/Sparepart');
 const Repair = require('./models/Repair');
 
 const app = express();
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -52,7 +54,12 @@ app.use(async (req, res, next) => {
         await connectDB();
         next();
     } catch (err) {
-        res.status(500).send('Koneksi database gagal: ' + err.message);
+        res.status(500).render('admin-sparepart', { 
+            user: req.session.user || null, 
+            spareparts: [], 
+            search: '', 
+            error: 'Koneksi database gagal: ' + err.message 
+        });
     }
 });
 
@@ -63,7 +70,16 @@ const isAuthenticated = (req, res, next) => {
 
 const isAdmin = (req, res, next) => {
     if (req.session.user && req.session.user.role === 'admin') return next();
-    res.status(403).send('Akses Ditolak: Khusus Admin');
+    Sparepart.find().then(spareparts => {
+        res.status(403).render('admin-sparepart', {
+            user: req.session.user,
+            spareparts,
+            search: '',
+            error: 'Akses Ditolak: Fitur ini khusus untuk Admin!'
+        });
+    }).catch(() => {
+        res.status(403).send('Akses Ditolak: Khusus Admin');
+    });
 };
 
 // --- ROUTES AUTHENTICATION ---
@@ -105,9 +121,9 @@ app.get('/admin/sparepart', isAdmin, async (req, res) => {
             };
         }
         const spareparts = await Sparepart.find(query);
-        res.render('admin-sparepart', { user: req.session.user, spareparts, search: search || '' });
+        res.render('admin-sparepart', { user: req.session.user, spareparts, search: search || '', error: null });
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(500).render('admin-sparepart', { user: req.session.user, spareparts: [], search: '', error: err.message });
     }
 });
 
@@ -121,9 +137,11 @@ app.post('/admin/sparepart/save', isAdmin, async (req, res) => {
         }
         res.redirect('/admin/sparepart');
     } catch (err) {
-        res.status(500).send('Gagal menyimpan sparepart: ' + err.message);
+        const spareparts = await Sparepart.find();
+        res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Gagal menyimpan sparepart: ' + err.message });
     }
 });
+
 // ROUTE HAPUS SPAREPART
 app.post('/admin/sparepart/delete/:id', isAdmin, async (req, res) => {
     try {
@@ -131,7 +149,8 @@ app.post('/admin/sparepart/delete/:id', isAdmin, async (req, res) => {
         await Sparepart.findByIdAndDelete(id);
         res.redirect('/admin/sparepart');
     } catch (err) {
-        res.status(500).send('Gagal menghapus sparepart: ' + err.message);
+        const spareparts = await Sparepart.find();
+        res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Gagal menghapus sparepart: ' + err.message });
     }
 });
 
@@ -143,7 +162,8 @@ app.post('/admin/sparepart/update-stok', isAdmin, async (req, res) => {
 
         const sp = await Sparepart.findById(sparepartId);
         if (!sp) {
-            return res.status(404).send('Sparepart tidak ditemukan');
+            const spareparts = await Sparepart.find();
+            return res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Sparepart tidak ditemukan!' });
         }
 
         if (jenis === 'tambah') {
@@ -151,7 +171,8 @@ app.post('/admin/sparepart/update-stok', isAdmin, async (req, res) => {
             sp.barangMasuk += qty;
         } else if (jenis === 'kurang') {
             if (sp.stokBarang < qty) {
-                return res.status(400).send('Stok tidak mencukupi untuk dikurangi!');
+                const spareparts = await Sparepart.find();
+                return res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Stok tidak mencukupi untuk dikurangi!' });
             }
             sp.stokBarang -= qty;
             sp.barangKeluar += qty;
@@ -160,10 +181,12 @@ app.post('/admin/sparepart/update-stok', isAdmin, async (req, res) => {
         await sp.save();
         res.redirect('/admin/sparepart');
     } catch (err) {
-        res.status(500).send('Gagal mengupdate stok: ' + err.message);
+        const spareparts = await Sparepart.find();
+        res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Gagal mengupdate stok: ' + err.message });
     }
 });
 
+// ROUTE EXPORT EXCEL
 app.get('/admin/sparepart/export', isAdmin, async (req, res) => {
     try {
         const spareparts = await Sparepart.find();
@@ -188,7 +211,56 @@ app.get('/admin/sparepart/export', isAdmin, async (req, res) => {
         await workbook.xlsx.write(res);
         res.end();
     } catch (err) {
-        res.status(500).send(err.message);
+        const spareparts = await Sparepart.find();
+        res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: err.message });
+    }
+});
+
+// ROUTE IMPORT EXCEL
+app.post('/admin/sparepart/import', isAdmin, upload.single('fileExcel'), async (req, res) => {
+    try {
+        if (!req.file) {
+            const spareparts = await Sparepart.find();
+            return res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Tidak ada file yang di-upload!' });
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(req.file.buffer);
+        const worksheet = workbook.getWorksheet(1);
+
+        worksheet.eachRow((row, rowNumber) => {
+            if (rowNumber === 1) return;
+
+            const kodeBarang = row.getCell(1).text ? row.getCell(1).text.trim() : '';
+            const namaBarang = row.getCell(2).text ? row.getCell(2).text.trim() : '';
+            const lokasiBarang = row.getCell(3).text ? row.getCell(3).text.trim() : '';
+            const typeBarang = row.getCell(4).text ? row.getCell(4).text.trim() : '';
+            const stokBarang = Number(row.getCell(5).value) || 0;
+            const barangMasuk = Number(row.getCell(6).value) || stokBarang;
+            const barangKeluar = Number(row.getCell(7).value) || 0;
+            const fungsiBarang = row.getCell(8).text ? row.getCell(8).text.trim() : '';
+
+            if (kodeBarang && namaBarang) {
+                Sparepart.findOneAndUpdate(
+                    { kodeBarang: kodeBarang },
+                    { 
+                        namaBarang, 
+                        lokasiBarang, 
+                        typeBarang, 
+                        stokBarang, 
+                        barangMasuk, 
+                        barangKeluar, 
+                        fungsiBarang 
+                    },
+                    { upsert: true, new: true }
+                ).exec();
+            }
+        });
+
+        res.redirect('/admin/sparepart');
+    } catch (err) {
+        const spareparts = await Sparepart.find();
+        res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Gagal mengimport data Excel: ' + err.message });
     }
 });
 
