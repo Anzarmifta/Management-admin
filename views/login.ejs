@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — Manajemen Sparepart</title>
-    <!-- Google Fonts: Plus Jakarta Sans untuk nuansa startup modern -->
+    <title>Login — MTC.SYS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -16,7 +15,6 @@
             position: relative;
         }
 
-        /* Background Aesthetic Startup Blobs */
         .bg-blob {
             position: absolute;
             width: 400px;
@@ -79,29 +77,15 @@
             margin-bottom: 6px;
         }
 
-        .startup-badge {
-            display: inline-block;
-            background: #f1f5f9;
-            color: #334155;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 30px;
-            margin-bottom: 16px;
-            letter-spacing: 0.5px;
-        }
-
         .powered-text {
             font-size: 0.75rem;
             letter-spacing: 0.5px;
             color: #94a3b8;
-            text-transform: lowercase;
         }
     </style>
 </head>
 <body class="d-flex align-items-center justify-content-center">
 
-    <!-- Background Decoration Elements -->
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
 
@@ -110,15 +94,14 @@
             
             <div class="card login-card p-4 p-sm-5">
                 <div class="text-center mb-4">
-                    <div class="startup-badge">⚡ INTERNAL PLATFORM</div>
-                    <h3 class="fw-bold mb-1" style="letter-spacing: -0.5px;">Welcome Back</h3>
-                    <p class="text-muted small">Sign in to manage sparepart & inventory</p>
+                    <h3 class="fw-bold mb-1" style="letter-spacing: -0.5px;">MTC.SYS</h3>
+                    <p class="text-muted small">Maintenance Control System</p>
                 </div>
 
                 <form action="/login" method="POST">
                     <div class="mb-3">
                         <label class="form-label">Username</label>
-                        <input type="text" name="username" class="form-control" placeholder="Enter your username" required autocomplete="off">
+                        <input type="text" name="username" class="form-control" placeholder="Enter username" required autocomplete="off">
                     </div>
                     <div class="mb-4">
                         <label class="form-label">Password</label>
@@ -127,15 +110,16 @@
                     <button type="submit" class="btn btn-dark w-100 mb-4">Sign In</button>
                 </form>
 
-                <div class="text-center pt-2 border-top border-light">
-                    <span class="powered-text">powered by zarski</span>
+                <div class="text-center pt-3 border-top border-light">
+                    <span class="powered-text">powered by zarski</span><br>
+                    <span class="powered-text">Design by anzarmf</span>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <!-- Modal Pop-up Jika Gagal Login -->
+    <!-- Modal Pop-up -->
     <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 320px;">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
@@ -146,22 +130,19 @@
                         </svg>
                     </div>
                     <h5 class="fw-bold mb-2">Access Denied</h5>
-                    <p class="text-muted small mb-4" id="errorMessage"><%= error ? error : '' %></p>
+                    <p class="text-muted small mb-4"><%= error ? error : '' %></p>
                     <button type="button" class="btn btn-dark w-100 rounded-pill btn-sm py-2" data-bs-dismiss="modal">Try Again</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <% if(error) { %>
     <script>
-        // Trigger modal otomatis ketika backend mengirimkan variabel error
         document.addEventListener("DOMContentLoaded", function() {
-            var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
-            myModal.show();
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
         });
     </script>
     <% } %>
