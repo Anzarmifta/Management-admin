@@ -1,86 +1,225 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Manajemen Sparepart - Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTC.SYS — Sparepart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --radius-ios: 18px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navbar ala iOS Glassmorphism */
+        .navbar {
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #0f172a !important;
+        }
+        .nav-link {
+            color: var(--text-muted) !important;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: var(--text-main) !important;
+        }
+
+        /* Card Container ala iOS Card */
+        .ios-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: var(--radius-ios);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03);
+        }
+
+        /* Tombol & Input Minimalis */
+        .form-control, .form-select {
+            border-radius: 12px;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #fff;
+            border-color: #0f172a;
+            box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.04);
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 10px 18px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .btn-dark {
+            background-color: #0f172a;
+            border: none;
+        }
+        .btn-dark:hover {
+            background-color: #1e293b;
+            transform: translateY(-1px);
+        }
+        .btn-light-subtle {
+            background-color: #f1f5f9;
+            color: #334155;
+            border: none;
+        }
+        .btn-light-subtle:hover {
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+
+        /* Tabel Clean Style */
+        .table {
+            color: var(--text-main);
+            white-space: nowrap;
+        }
+        .table > thead > tr > th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 14px 16px;
+        }
+        .table > tbody > tr > td {
+            padding: 14px 16px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        /* Modals ala iOS Sheet */
+        .modal-content {
+            border: none;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(15, 23, 42, 0.15);
+        }
+        .modal-header {
+            border-bottom: 1px solid #f1f5f9;
+            padding: 20px 24px;
+        }
+        .modal-body {
+            padding: 24px;
+        }
+        .modal-footer {
+            border-top: 1px solid #f1f5f9;
+            padding: 16px 24px;
+        }
+    </style>
 </head>
 <body class="bg-light">
-    <nav class="navbar navbar-dark bg-dark px-4 navbar-expand">
-        <span class="navbar-brand mb-0 h1">Admin Panel</span>
-        <div class="navbar-nav ms-auto">
-            <a href="/admin/sparepart" class="nav-link active fw-bold">Sparepart</a>
-            <a href="/admin/repair" class="nav-link">Kegiatan Perbaikan</a>
-            <a href="/logout" class="btn btn-outline-light btn-sm ms-3">Logout</a>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand px-4 sticky-top">
+        <span class="navbar-brand mb-0 h1">MTC.SYS</span>
+        <div class="navbar-nav ms-auto align-items-center gap-2">
+            <a href="/admin/sparepart" class="nav-link active">Sparepart</a>
+            <a href="/admin/repair" class="nav-link">Repair</a>
+            <a href="/logout" class="btn btn-light-subtle btn-sm ms-2">Logout</a>
         </div>
     </nav>
 
-    <div class="container my-4">
-        <div class="card p-4 shadow-sm mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                <h4>Data Master Sparepart & Stok</h4>
+    <div class="container my-4 py-2">
+        <div class="ios-card p-4 mb-4">
+            
+            <!-- Header & Action Buttons -->
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div>
-                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalSparepart">+ Tambah Barang Baru</button>
-                    <button class="btn btn-warning btn-sm text-dark fw-bold" data-bs-toggle="modal" data-bs-target="#modalUpdateStok">⚡ Tambah / Kurang Qty Stok</button>
-                    <a href="/admin/sparepart/export" class="btn btn-success btn-sm">Export Excel</a>
+                    <h4 class="fw-bold mb-1" style="letter-spacing: -0.5px;">Sparepart Inventory</h4>
+                    <p class="text-muted small mb-0">Manage stock levels and components</p>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#modalSparepart">+ New Item</button>
+                    <button class="btn btn-light-subtle btn-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#modalUpdateStok">⚡ Adjust Stock</button>
+                    <a href="/admin/sparepart/export" class="btn btn-outline-success btn-sm border-0 bg-success-subtle text-success fw-semibold">Export</a>
                 </div>
             </div>
 
-            <form action="/admin/sparepart" method="GET" class="input-group mb-3">
-                <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan nama, kode, lokasi, type, atau fungsi..." value="<%= search %>">
-                <button class="btn btn-outline-secondary" type="submit">Cari</button>
+            <!-- Search Bar -->
+            <form action="/admin/sparepart" method="GET" class="input-group mb-4">
+                <input type="text" name="search" class="form-control border-end-0" placeholder="Search by name, code, location..." value="<%= search %>">
+                <button class="btn btn-outline-secondary border-start-0 bg-transparent text-muted" type="submit">Search</button>
                 <% if(search) { %>
-                    <a href="/admin/sparepart" class="btn btn-outline-danger">Reset</a>
+                    <a href="/admin/sparepart" class="btn btn-outline-danger border-0 bg-danger-subtle text-danger">Reset</a>
                 <% } %>
             </form>
 
+            <!-- Table -->
             <div class="table-responsive">
-                <table class="table table-bordered table-striped align-middle">
-                    <thead class="table-dark">
+                <table class="table align-middle mb-0">
+                    <thead>
                         <tr>
                             <th>Kode</th>
                             <th>Nama Barang</th>
                             <th>Lokasi</th>
                             <th>Type</th>
-                            <th>Stok Tersedia</th>
+                            <th>Stok</th>
                             <th>Masuk</th>
                             <th>Keluar</th>
                             <th>Fungsi</th>
-                            <th class="text-center">Aksi</th>
+                            <th class="text-end">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% if(spareparts.length === 0) { %>
-                            <tr><td colspan="9" class="text-center">Tidak ada data sparepart ditemukan.</td></tr>
+                            <tr><td colspan="9" class="text-center py-4 text-muted">No spareparts found.</td></tr>
                         <% } %>
                         <% spareparts.forEach(s => { %>
                         <tr>
-                            <td><%= s.kodeBarang %></td>
-                            <td><%= s.namaBarang %></td>
+                            <td class="fw-semibold text-secondary"><%= s.kodeBarang %></td>
+                            <td class="fw-bold"><%= s.namaBarang %></td>
                             <td><%= s.lokasiBarang || '-' %></td>
                             <td><%= s.typeBarang || '-' %></td>
                             <td>
-                                <span class="badge bg-<%= s.stokBarang > 0 ? 'primary' : 'danger' %> fs-6">
+                                <span class="badge bg-<%= s.stokBarang > 0 ? 'dark' : 'danger' %> px-2 py-1 rounded-pill fw-medium">
                                     <%= s.stokBarang %>
                                 </span>
                             </td>
-                            <td><%= s.barangMasuk %></td>
-                            <td><%= s.barangKeluar %></td>
+                            <td class="text-success fw-medium">+<%= s.barangMasuk %></td>
+                            <td class="text-danger fw-medium">-<%= s.barangKeluar %></td>
                             <td><%= s.fungsiBarang || '-' %></td>
-                            <td class="text-center">
+                            <td class="text-end">
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <button class="ubah-stok-btn btn btn-outline-success" 
+                                    <button class="ubah-stok-btn btn btn-light-subtle py-1 px-2" 
                                         data-id="<%= s._id %>" 
                                         data-nama="<%= s.namaBarang %>" 
                                         data-kode="<%= s.kodeBarang %>"
                                         data-bs-toggle="modal" data-bs-target="#modalUpdateStokDirect">
                                         ± Qty
                                     </button>
-                                    <button class="hapus-btn btn btn-outline-danger" 
+                                    <button class="hapus-btn btn btn-light-subtle text-danger py-1 px-2" 
                                         data-id="<%= s._id %>" 
                                         data-nama="<%= s.namaBarang %>" 
                                         data-kode="<%= s.kodeBarang %>"
                                         data-bs-toggle="modal" data-bs-target="#modalHapus">
-                                        Hapus
+                                        Delete
                                     </button>
                                 </div>
                             </td>
@@ -94,62 +233,64 @@
 
     <!-- Modal Tambah Barang -->
     <div class="modal fade" id="modalSparepart" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <form action="/admin/sparepart/save" method="POST" class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Sparepart Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">New Sparepart</h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-2"><label class="form-label">Nama Barang</label><input type="text" name="namaBarang" class="form-control" required></div>
-                    <div class="mb-2"><label class="form-label">Kode Barang</label><input type="text" name="kodeBarang" class="form-control" required></div>
-                    <div class="mb-2"><label class="form-label">Lokasi Barang</label><input type="text" name="lokasiBarang" class="form-control" placeholder="Contoh: Rak A-1"></div>
-                    <div class="mb-2"><label class="form-label">Type Barang</label><input type="text" name="typeBarang" class="form-control"></div>
-                    <div class="mb-2"><label class="form-label">Stok Awal</label><input type="number" name="stokBarang" class="form-control" value="0" min="0" required></div>
-                    <div class="mb-2"><label class="form-label">Fungsi Barang</label><input type="text" name="fungsiBarang" class="form-control"></div>
+                    <div class="mb-3"><label class="form-label text-muted small fw-semibold">Nama Barang</label><input type="text" name="namaBarang" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label text-muted small fw-semibold">Kode Barang</label><input type="text" name="kodeBarang" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label text-muted small fw-semibold">Lokasi Barang</label><input type="text" name="lokasiBarang" class="form-control" placeholder="Contoh: Rak A-1"></div>
+                    <div class="mb-3"><label class="form-label text-muted small fw-semibold">Type Barang</label><input type="text" name="typeBarang" class="form-control"></div>
+                    <div class="mb-3"><label class="form-label text-muted small fw-semibold">Stok Awal</label><input type="number" name="stokBarang" class="form-control" value="0" min="0" required></div>
+                    <div class="mb-0"><label class="form-label text-muted small fw-semibold">Fungsi Barang</label><input type="text" name="fungsiBarang" class="form-control"></div>
                 </div>
-                <div class="modal-footer"><button type="submit" class="btn btn-primary">Simpan</button></div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="submit" class="btn btn-dark w-100 py-2">Save Item</button>
+                </div>
             </form>
         </div>
     </div>
 
     <!-- Modal Update Stok Universal -->
     <div class="modal fade" id="modalUpdateStok" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <form action="/admin/sparepart/update-stok" method="POST" class="modal-content">
-                <div class="modal-header bg-warning">
-                    <h5 class="modal-title text-dark fw-bold">Tambah / Kurang Quantity Sparepart</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Adjust Quantity</h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Cari Barang (Ketik Nama / Kode / Type / Lokasi):</label>
-                        <input type="text" id="globalSearchStock" class="form-control mb-2" placeholder="Ketik kata kunci pencarian..." onkeyup="filterStockOptions(this)">
+                        <label class="form-label text-muted small fw-semibold">Cari Barang:</label>
+                        <input type="text" id="globalSearchStock" class="form-control mb-2" placeholder="Ketik kata kunci..." onkeyup="filterStockOptions(this)">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Pilih Sparepart</label>
-                        <select name="sparepartId" id="globalStockSelect" class="form-control" size="6" required>
+                        <label class="form-label text-muted small fw-semibold">Pilih Sparepart</label>
+                        <select name="sparepartId" id="globalStockSelect" class="form-select" size="5" required>
                             <% spareparts.forEach(s => { %>
                                 <option value="<%= s._id %>" data-keywords="<%= (s.namaBarang + ' ' + s.kodeBarang + ' ' + (s.typeBarang || '') + ' ' + (s.lokasiBarang || '')).toLowerCase() %>">
-                                    [<%= s.kodeBarang %>] <%= s.namaBarang %> — Stok: <%= s.stokBarang %>
+                                    [<%= s.kodeBarang %>] <%= s.namaBarang %> (Stok: <%= s.stokBarang %>)
                                 </option>
                             <% }) %>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Jenis Perubahan Qty</label>
-                        <select name="jenis" class="form-control" required>
-                            <option value="tambah">Tambah Qty (Stok Masuk / Pembelian / Retur)</option>
-                            <option value="kurang">Kurang Qty (Koreksi Stok / Rusak / Hilang)</option>
+                        <label class="form-label text-muted small fw-semibold">Jenis Perubahan</label>
+                        <select name="jenis" class="form-select" required>
+                            <option value="tambah">Tambah Qty (Masuk)</option>
+                            <option value="kurang">Kurang Qty (Keluar / Rusak)</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Jumlah (Quantity)</label>
+                    <div class="mb-0">
+                        <label class="form-label text-muted small fw-semibold">Jumlah (Quantity)</label>
                         <input type="number" name="jumlah" class="form-control" value="1" min="1" required>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-warning text-dark fw-bold w-100">Proses Perubahan Stok</button>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="submit" class="btn btn-dark w-100 py-2">Process Stock</button>
                 </div>
             </form>
         </div>
@@ -157,28 +298,29 @@
 
     <!-- Modal Update Stok Baris -->
     <div class="modal fade" id="modalUpdateStokDirect" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <form action="/admin/sparepart/update-stok" method="POST" class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">Update Stok: <span id="directNamaBarang"></span></h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Update Stock</h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <p class="text-muted small mb-3">Item: <strong id="directNamaBarang" class="text-dark"></strong></p>
                     <input type="hidden" name="sparepartId" id="directSparepartId">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Aksi Qty</label>
-                        <select name="jenis" class="form-control" required>
+                        <label class="form-label text-muted small fw-semibold">Aksi Qty</label>
+                        <select name="jenis" class="form-select" required>
                             <option value="tambah">Tambah Qty (Masuk)</option>
                             <option value="kurang">Kurang Qty (Keluar / Koreksi)</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Jumlah Quantity</label>
+                    <div class="mb-0">
+                        <label class="form-label text-muted small fw-semibold">Jumlah Quantity</label>
                         <input type="number" name="jumlah" class="form-control" value="1" min="1" required>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success w-100">Simpan Perubahan Stok</button>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="submit" class="btn btn-dark w-100 py-2">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -186,26 +328,26 @@
 
     <!-- Modal Konfirmasi Hapus Barang -->
     <div class="modal fade" id="modalHapus" tabindex="-1">
-        <div class="modal-dialog">
-            <form id="formHapus" action="" method="POST" class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Konfirmasi Hapus Barang</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 380px;">
+            <form id="formHapus" action="" method="POST" class="modal-content text-center p-3">
                 <div class="modal-body">
-                    <p class="mb-0">Apakah Anda yakin ingin menghapus barang <strong id="hapusNamaBarang"></strong>?</p>
-                    <small class="text-muted">Tindakan ini tidak dapat dibatalkan.</small>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger">Hapus Data</button>
+                    <div class="mb-3 text-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5Zm4 0a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5Z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold mb-2">Delete Item?</h5>
+                    <p class="text-muted small mb-4">Are you sure you want to delete <strong id="hapusNamaBarang" class="text-dark"></strong>? This action cannot be undone.</p>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-light-subtle w-50 py-2" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger w-50 py-2">Delete</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // Filter interaktif di dalam modal cari stok universal
         function filterStockOptions(inputElement) {
             const keyword = inputElement.value.toLowerCase();
             const select = document.getElementById('globalStockSelect');
@@ -221,7 +363,6 @@
             }
         }
 
-        // Script untuk tombol cepat ± Qty di setiap baris tabel
         document.querySelectorAll('.ubah-stok-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
@@ -233,7 +374,6 @@
             });
         });
 
-        // Script untuk tombol Hapus di setiap baris tabel
         document.querySelectorAll('.hapus-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
@@ -241,7 +381,6 @@
                 const kode = this.getAttribute('data-kode');
 
                 document.getElementById('hapusNamaBarang').innerText = `[${kode}] ${nama}`;
-                // Mengatur atribut action form modal hapus dengan ID barang
                 document.getElementById('formHapus').action = `/admin/sparepart/delete/${id}`;
             });
         });
