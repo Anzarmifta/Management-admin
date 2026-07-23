@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kegiatan Perbaikan - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark px-4 navbar-expand">
+        <span class="navbar-brand mb-0 h1">Admin Panel</span>
+        <div class="navbar-nav ms-auto">
+            <a href="/admin/sparepart" class="nav-link">Sparepart</a>
+            <a href="/admin/repair" class="nav-link active fw-bold">Kegiatan Perbaikan</a>
+            <a href="/logout" class="btn btn-outline-light btn-sm ms-3">Logout</a>
+        </div>
+    </nav>
+    <div class="container my-4">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card p-3 shadow-sm h-100">
+                    <h5>Buat Akun User Baru</h5>
+                    <form action="/admin/user/add" method="POST" class="row g-2 mt-1">
+                        <div class="col-md-4"><input type="text" name="username" class="form-control form-control-sm" placeholder="Username" required></div>
+                        <div class="col-md-4"><input type="password" name="password" class="form-control form-control-sm" placeholder="Password" required></div>
+                        <div class="col-md-2">
+                            <select name="role" class="form-control form-control-sm">
+                                <option value="teknisi">Teknisi</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2"><button type="submit" class="btn btn-secondary btn-sm w-100">Buat</button></div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-3 shadow-sm h-100">
+                    <h5>Export Laporan Perbaikan ke Excel</h5>
+                    <form action="/admin/repair/export" method="GET" class="row g-2 mt-1">
+                        <div class="col-md-4"><input type="date" name="startDate" class="form-control form-control-sm" required></div>
+                        <div class="col-md-4"><input type="date" name="endDate" class="form-control form-control-sm" required></div>
+                        <div class="col-md-4"><button type="submit" class="btn btn-success btn-sm w-100">Download</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-3 shadow-sm mb-4">
+            <form action="/admin/repair" method="GET" class="row g-3 align-items-end">
+                <input type="hidden" name="filterType" value="month" id="filterTypeInput">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Filter Berdasarkan:</label>
+                    <select id="selectorType" class="form-control" onchange="toggleFilter(this.value)">
+                        <option value="all" <%= filterType=='all'?'selected':'' %>>Semua Data</option>
+                        <option value="month" <%= filterType=='month'?'selected':'' %>>Per Bulan</option>
+                        <option value="week" <%= filterType=='week'?'selected':'' %>>Per Minggu (Rentang Tanggal)</option>
+                    </select>
+                </div>
+                <div class="col-md-3" id="monthBox" style="display: <%= filterType=='month'?'block':'none' %>;">
+                    <label class="form-label">Pilih Bulan</label>
+                    <input type="month" name="month" class="form-control" value="<%= month %>">
+                </div>
+                <div class="col-md-3" id="weekStartBox" style="display: <%= filterType=='week'?'block':'none' %>;">
+                    <label class="form-label">Dari Tanggal</label>
+                    <input type="date" name="weekStart" class="form-control" value="<%= weekStart %>">
+                </div>
+                <div class="col-md-3" id="weekEndBox" style="display: <%= filterType=='week'?'block':'none' %>;">
+                    <label class="form-label">Sampai Tanggal</label>
+                    <input type="date" name="weekEnd" class="form-control" value="<%= weekEnd %>">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">Terapkan Filter</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card p-3 shadow-sm">
+            <h4 class="mb-3">Daftar Kegiatan Perbaikan (Semua Teknisi)</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-sm align-middle" style="font-size: 13px;">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Tanggal</th><th>Shift</th><th>Mesin</th><th>Problem</th><th>Analisa</th><th>Perbaikan</th><th>Sparepart Dipakai</th><th>PIC</th><th>Jam</th><th>Status</th><th>Ket</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if(repairs.length === 0) { %>
+                            <tr><td colspan="11" class="text-center">Belum ada data perbaikan.</td></tr>
+                        <% } %>
+                        <% repairs.forEach(r => { %>
+                        <tr>
+                            <td><%= r.tanggal ? r.tanggal.toISOString().split('T')[0] : '' %></td>
+                            <td><%= r.shift %></td>
+                            <td><%= r.namaMesin %></td>
+                            <td><%= r.problem %></td>
+                            <td><%= r.analisaPenyebab %></td>
+                            <td><%= r.caraPerbaikan %></td>
+                            <td>
+                                <% if(r.sparepartsUsed && r.sparepartsUsed.length > 0) { %>
+                                    <ul class="ps-3 mb-0">
+                                        <% r.sparepartsUsed.forEach(item => { %>
+                                            <li><%= item.sparepart ? item.sparepart.namaBarang : 'Dihapus' %> (<%= item.jumlahPakai %>x)</li>
+                                        <% }) %>
+                                    </ul>
+                                <% } else { %>
+                                    -
+                                <% } %>
+                            </td>
+                            <td><%= r.pic %></td>
+                            <td><%= r.jamMulai %> - <%= r.jamSelesai %></td>
+                            <td>
+                                <span class="badge bg-<%= r.status=='ok'?'success':(r.status=='progress'?'warning':'danger') %>">
+                                    <%= r.status.toUpperCase() %>
+                                </span>
+                            </td>
+                            <td><%= r.keterangan %></td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="mt-3">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="/admin/repair?page=<%= currentPage - 1 %>&filterType=<%= filterType %>&month=<%= month %>&weekStart=<%= weekStart %>&weekEnd=<%= weekEnd %>">Previous</a>
+                    </li>
+                    <li class="page-item disabled"><span class="page-link">Halaman <%= currentPage %> dari <%= totalPages %></span></li>
+                    <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                        <a class="page-link" href="/admin/repair?page=<%= currentPage + 1 %>&filterType=<%= filterType %>&month=<%= month %>&weekStart=<%= weekStart %>&weekEnd=<%= weekEnd %>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        function toggleFilter(val) {
+            document.getElementById('filterTypeInput').value = val;
+            document.getElementById('monthBox').style.display = val === 'month' ? 'block' : 'none';
+            document.getElementById('weekStartBox').style.display = val === 'week' ? 'block' : 'none';
+            document.getElementById('weekEndBox').style.display = val === 'week' ? 'block' : 'none';
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

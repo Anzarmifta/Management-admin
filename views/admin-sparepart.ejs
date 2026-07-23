@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manajemen Sparepart - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark px-4 navbar-expand">
+        <span class="navbar-brand mb-0 h1">Admin Panel</span>
+        <div class="navbar-nav ms-auto">
+            <a href="/admin/sparepart" class="nav-link active fw-bold">Sparepart</a>
+            <a href="/admin/repair" class="nav-link">Kegiatan Perbaikan</a>
+            <a href="/logout" class="btn btn-outline-light btn-sm ms-3">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <div class="card p-4 shadow-sm mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h4>Data Master Sparepart & Stok</h4>
+                <div>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalSparepart">+ Tambah Barang Baru</button>
+                    <button class="btn btn-warning btn-sm text-dark fw-bold" data-bs-toggle="modal" data-bs-target="#modalUpdateStok">⚡ Tambah / Kurang Qty Stok</button>
+                    <a href="/admin/sparepart/export" class="btn btn-success btn-sm">Export Excel</a>
+                </div>
+            </div>
+
+            <form action="/admin/sparepart" method="GET" class="input-group mb-3">
+                <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan nama, kode, lokasi, type, atau fungsi..." value="<%= search %>">
+                <button class="btn btn-outline-secondary" type="submit">Cari</button>
+                <% if(search) { %>
+                    <a href="/admin/sparepart" class="btn btn-outline-danger">Reset</a>
+                <% } %>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Kode</th>
+                            <th>Nama Barang</th>
+                            <th>Lokasi</th>
+                            <th>Type</th>
+                            <th>Stok Tersedia</th>
+                            <th>Masuk</th>
+                            <th>Keluar</th>
+                            <th>Fungsi</th>
+                            <th class="text-center">Aksi Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if(spareparts.length === 0) { %>
+                            <tr><td colspan="9" class="text-center">Tidak ada data sparepart ditemukan.</td></tr>
+                        <% } %>
+                        <% spareparts.forEach(s => { %>
+                        <tr>
+                            <td><%= s.kodeBarang %></td>
+                            <td><%= s.namaBarang %></td>
+                            <td><%= s.lokasiBarang || '-' %></td>
+                            <td><%= s.typeBarang || '-' %></td>
+                            <td>
+                                <span class="badge bg-<%= s.stokBarang > 0 ? 'primary' : 'danger' %> fs-6">
+                                    <%= s.stokBarang %>
+                                </span>
+                            </td>
+                            <td><%= s.barangMasuk %></td>
+                            <td><%= s.barangKeluar %></td>
+                            <td><%= s.fungsiBarang || '-' %></td>
+                            <td class="text-center">
+                                <button class="ubah-stok-btn btn btn-sm btn-outline-success" 
+                                    data-id="<%= s._id %>" 
+                                    data-nama="<%= s.namaBarang %>" 
+                                    data-kode="<%= s.kodeBarang %>"
+                                    data-bs-toggle="modal" data-bs-target="#modalUpdateStokDirect">
+                                    ± Qty
+                                </button>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalSparepart" tabindex="-1">
+        <div class="modal-dialog">
+            <form action="/admin/sparepart/save" method="POST" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Sparepart Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2"><label class="form-label">Nama Barang</label><input type="text" name="namaBarang" class="form-control" required></div>
+                    <div class="mb-2"><label class="form-label">Kode Barang</label><input type="text" name="kodeBarang" class="form-control" required></div>
+                    <div class="mb-2"><label class="form-label">Lokasi Barang</label><input type="text" name="lokasiBarang" class="form-control" placeholder="Contoh: Rak A-1"></div>
+                    <div class="mb-2"><label class="form-label">Type Barang</label><input type="text" name="typeBarang" class="form-control"></div>
+                    <div class="mb-2"><label class="form-label">Stok Awal</label><input type="number" name="stokBarang" class="form-control" value="0" min="0" required></div>
+                    <div class="mb-2"><label class="form-label">Fungsi Barang</label><input type="text" name="fungsiBarang" class="form-control"></div>
+                </div>
+                <div class="modal-footer"><button type="submit" class="btn btn-primary">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalUpdateStok" tabindex="-1">
+        <div class="modal-dialog">
+            <form action="/admin/sparepart/update-stok" method="POST" class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title text-dark fw-bold">Tambah / Kurang Quantity Sparepart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Cari Barang (Ketik Nama / Kode / Type / Lokasi):</label>
+                        <input type="text" id="globalSearchStock" class="form-control mb-2" placeholder="Ketik kata kunci pencarian..." onkeyup="filterStockOptions(this)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Pilih Sparepart</label>
+                        <select name="sparepartId" id="globalStockSelect" class="form-control" size="6" required>
+                            <% spareparts.forEach(s => { %>
+                                <option value="<%= s._id %>" data-keywords="<%= (s.namaBarang + ' ' + s.kodeBarang + ' ' + (s.typeBarang || '') + ' ' + (s.lokasiBarang || '')).toLowerCase() %>">
+                                    [<%= s.kodeBarang %>] <%= s.namaBarang %> — Stok: <%= s.stokBarang %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Jenis Perubahan Qty</label>
+                        <select name="jenis" class="form-control" required>
+                            <option value="tambah">Tambah Qty (Stok Masuk / Pembelian / Retur)</option>
+                            <option value="kurang">Kurang Qty (Koreksi Stok / Rusak / Hilang)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Jumlah (Quantity)</label>
+                        <input type="number" name="jumlah" class="form-control" value="1" min="1" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning text-dark fw-bold w-100">Proses Perubahan Stok</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalUpdateStokDirect" tabindex="-1">
+        <div class="modal-dialog">
+            <form action="/admin/sparepart/update-stok" method="POST" class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Update Stok: <span id="directNamaBarang"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="sparepartId" id="directSparepartId">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Aksi Qty</label>
+                        <select name="jenis" class="form-control" required>
+                            <option value="tambah">Tambah Qty (Masuk)</option>
+                            <option value="kurang">Kurang Qty (Keluar / Koreksi)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Jumlah Quantity</label>
+                        <input type="number" name="jumlah" class="form-control" value="1" min="1" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success w-100">Simpan Perubahan Stok</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Filter interaktif di dalam modal cari stok universal
+        function filterStockOptions(inputElement) {
+            const keyword = inputElement.value.toLowerCase();
+            const select = document.getElementById('globalStockSelect');
+            const options = select.getElementsByTagName('option');
+
+            for (let i = 0; i < options.length; i++) {
+                const keywords = options[i].getAttribute('data-keywords');
+                if (keywords.includes(keyword)) {
+                    options[i].style.display = "";
+                } else {
+                    options[i].style.display = "none";
+                }
+            }
+        }
+
+        // Script untuk tombol cepat ± Qty di setiap baris tabel
+        document.querySelectorAll('.ubah-stok-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const nama = this.getAttribute('data-nama');
+                const kode = this.getAttribute('data-kode');
+
+                document.getElementById('directSparepartId').value = id;
+                document.getElementById('directNamaBarang').innerText = `[${kode}] ${nama}`;
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

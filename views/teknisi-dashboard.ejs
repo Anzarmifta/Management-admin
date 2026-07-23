@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Teknisi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-secondary px-4 navbar-expand">
+        <span class="navbar-brand mb-0 h1">Teknisi Dashboard</span>
+        <div class="navbar-nav ms-auto">
+            <a href="/teknisi/dashboard" class="nav-link active fw-bold">Input Perbaikan</a>
+            <a href="/teknisi/sparepart" class="nav-link">Cari Sparepart</a>
+            <a href="/logout" class="btn btn-outline-light btn-sm ms-3">Logout</a>
+        </div>
+    </nav>
+    <div class="container my-4">
+        <div class="card p-4 shadow-sm mb-4">
+            <h4>Form Kegiatan Perbaikan</h4>
+            <form action="/repair/add" method="POST" class="row g-3 mt-2">
+                <div class="col-md-4"><label class="form-label">Tanggal</label><input type="date" name="tanggal" class="form-control" required></div>
+                <div class="col-md-4"><label class="form-label">Shift</label><input type="text" name="shift" class="form-control" required></div>
+                <div class="col-md-4"><label class="form-label">Nama Mesin</label><input type="text" name="namaMesin" class="form-control" required></div>
+                
+                <div class="col-md-6"><label class="form-label">Problem</label><textarea name="problem" class="form-control" required></textarea></div>
+                <div class="col-md-6"><label class="form-label">Analisa Penyebab</label><textarea name="analisaPenyebab" class="form-control"></textarea></div>
+                
+                <div class="col-md-6"><label class="form-label">Cara Perbaikan</label><textarea name="caraPerbaikan" class="form-control"></textarea></div>
+                
+                <!-- Multi Sparepart Input dengan Fitur Pencarian -->
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Sparepart yang Digunakan</label>
+                    <div id="sparepartContainer">
+                        <div class="border p-3 mb-2 rounded bg-white sparepart-row shadow-sm">
+                            <div class="mb-2">
+                                <input type="text" class="form-control form-control-sm search-sparepart" placeholder="Cari sparepart (nama, kode, type, lokasi, fungsi)..." onkeyup="filterSparepartOptions(this)">
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-8">
+                                    <select name="sparepartIds" class="form-control sparepart-select" required>
+                                        <option value="">-- Pilih Sparepart --</option>
+                                        <% spareparts.forEach(s => { %>
+                                            <option value="<%= s._id %>" data-keywords="<%= (s.namaBarang + ' ' + s.kodeBarang + ' ' + (s.typeBarang || '') + ' ' + (s.lokasiBarang || '') + ' ' + (s.fungsiBarang || '')).toLowerCase() %>">
+                                                <%= s.namaBarang %> (Kode: <%= s.kodeBarang %> | Type: <%= s.typeBarang || '-' %> | Stok: <%= s.stokBarang %>)
+                                            </option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="number" name="jumlahPakais" class="form-control" placeholder="Qty" value="1" min="1" required>
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-danger w-100" onclick="this.closest('.sparepart-row').remove()">X</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mt-1" onclick="addSparepartRow()">+ Tambah Sparepart Lain</button>
+                </div>
+
+                <div class="col-md-3"><label class="form-label">PIC</label><input type="text" name="pic" class="form-control" required></div>
+                <div class="col-md-3"><label class="form-label">Jam Mulai</label><input type="time" name="jamMulai" class="form-control" required></div>
+                <div class="col-md-3"><label class="form-label">Jam Selesai</label><input type="time" name="jamSelesai" class="form-control" required></div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-control">
+                        <option value="open">Open</option>
+                        <option value="progress">Progress</option>
+                        <option value="ok">OK</option>
+                    </select>
+                </div>
+                <div class="col-md-12"><label class="form-label">Keterangan</label><input type="text" name="keterangan" class="form-control"></div>
+
+                <div class="col-md-12"><button type="submit" class="btn btn-primary w-100">Simpan Laporan & Ambil Sparepart</button></div>
+            </form>
+        </div>
+
+        <div class="card p-4 shadow-sm">
+            <h4>Riwayat Semua Perbaikan</h4>
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered table-striped table-sm align-middle" style="font-size: 13px;">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>Tanggal</th><th>Shift</th><th>Mesin</th><th>Problem</th><th>Perbaikan</th><th>Sparepart Dipakai</th><th>PIC</th><th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% repairs.forEach(r => { %>
+                        <tr>
+                            <td><%= r.tanggal ? r.tanggal.toISOString().split('T')[0] : '' %></td>
+                            <td><%= r.shift %></td>
+                            <td><%= r.namaMesin %></td>
+                            <td><%= r.problem %></td>
+                            <td><%= r.caraPerbaikan %></td>
+                            <td>
+                                <% if(r.sparepartsUsed && r.sparepartsUsed.length > 0) { %>
+                                    <ul class="ps-3 mb-0">
+                                        <% r.sparepartsUsed.forEach(item => { %>
+                                            <li><%= item.sparepart ? item.sparepart.namaBarang : 'Dihapus' %> (<%= item.jumlahPakai %>x)</li>
+                                        <% }) %>
+                                    </ul>
+                                <% } else { %>
+                                    -
+                                <% } %>
+                            </td>
+                            <td><%= r.pic %></td>
+                            <td><span class="badge bg-<%= r.status=='ok'?'success':(r.status=='progress'?'warning':'danger') %>"><%= r.status.toUpperCase() %></span></td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="mt-3">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="/teknisi/dashboard?page=<%= currentPage - 1 %>">Previous</a>
+                    </li>
+                    <li class="page-item disabled"><span class="page-link">Halaman <%= currentPage %> dari <%= totalPages %></span></li>
+                    <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                        <a class="page-link" href="/teknisi/dashboard?page=<%= currentPage + 1 %>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+    function filterSparepartOptions(inputElement) {
+        const keyword = inputElement.value.toLowerCase();
+        const row = inputElement.closest('.sparepart-row');
+        const select = row.querySelector('.sparepart-select');
+        const options = select.getElementsByTagName('option');
+
+        for (let i = 1; i < options.length; i++) {
+            const keywords = options[i].getAttribute('data-keywords');
+            if (keywords.includes(keyword)) {
+                options[i].style.display = "";
+            } else {
+                options[i].style.display = "none";
+            }
+        }
+    }
+
+    function addSparepartRow() {
+        const container = document.getElementById('sparepartContainer');
+        const firstRow = container.querySelector('.sparepart-row');
+        const newRow = firstRow.cloneNode(true);
+        newRow.querySelector('.search-sparepart').value = "";
+        const select = newRow.querySelector('.sparepart-select');
+        select.value = "";
+        
+        const options = select.getElementsByTagName('option');
+        for (let i = 0; i < options.length; i++) {
+            options[i].style.display = "";
+        }
+
+        newRow.querySelector('input[name="jumlahPakais"]').value = "1";
+        container.appendChild(newRow);
+    }
+    </script>
+</body>
+</html>
