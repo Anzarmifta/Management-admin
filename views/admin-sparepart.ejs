@@ -45,7 +45,7 @@
                             <th>Masuk</th>
                             <th>Keluar</th>
                             <th>Fungsi</th>
-                            <th class="text-center">Aksi Qty</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,13 +67,22 @@
                             <td><%= s.barangKeluar %></td>
                             <td><%= s.fungsiBarang || '-' %></td>
                             <td class="text-center">
-                                <button class="ubah-stok-btn btn btn-sm btn-outline-success" 
-                                    data-id="<%= s._id %>" 
-                                    data-nama="<%= s.namaBarang %>" 
-                                    data-kode="<%= s.kodeBarang %>"
-                                    data-bs-toggle="modal" data-bs-target="#modalUpdateStokDirect">
-                                    ± Qty
-                                </button>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button class="ubah-stok-btn btn btn-outline-success" 
+                                        data-id="<%= s._id %>" 
+                                        data-nama="<%= s.namaBarang %>" 
+                                        data-kode="<%= s.kodeBarang %>"
+                                        data-bs-toggle="modal" data-bs-target="#modalUpdateStokDirect">
+                                        ± Qty
+                                    </button>
+                                    <button class="hapus-btn btn btn-outline-danger" 
+                                        data-id="<%= s._id %>" 
+                                        data-nama="<%= s.namaBarang %>" 
+                                        data-kode="<%= s.kodeBarang %>"
+                                        data-bs-toggle="modal" data-bs-target="#modalHapus">
+                                        Hapus
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         <% }) %>
@@ -83,6 +92,7 @@
         </div>
     </div>
 
+    <!-- Modal Tambah Barang -->
     <div class="modal fade" id="modalSparepart" tabindex="-1">
         <div class="modal-dialog">
             <form action="/admin/sparepart/save" method="POST" class="modal-content">
@@ -103,6 +113,7 @@
         </div>
     </div>
 
+    <!-- Modal Update Stok Universal -->
     <div class="modal fade" id="modalUpdateStok" tabindex="-1">
         <div class="modal-dialog">
             <form action="/admin/sparepart/update-stok" method="POST" class="modal-content">
@@ -144,6 +155,7 @@
         </div>
     </div>
 
+    <!-- Modal Update Stok Baris -->
     <div class="modal fade" id="modalUpdateStokDirect" tabindex="-1">
         <div class="modal-dialog">
             <form action="/admin/sparepart/update-stok" method="POST" class="modal-content">
@@ -167,6 +179,26 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success w-100">Simpan Perubahan Stok</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus Barang -->
+    <div class="modal fade" id="modalHapus" tabindex="-1">
+        <div class="modal-dialog">
+            <form id="formHapus" action="" method="POST" class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Konfirmasi Hapus Barang</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Apakah Anda yakin ingin menghapus barang <strong id="hapusNamaBarang"></strong>?</p>
+                    <small class="text-muted">Tindakan ini tidak dapat dibatalkan.</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus Data</button>
                 </div>
             </form>
         </div>
@@ -198,6 +230,19 @@
 
                 document.getElementById('directSparepartId').value = id;
                 document.getElementById('directNamaBarang').innerText = `[${kode}] ${nama}`;
+            });
+        });
+
+        // Script untuk tombol Hapus di setiap baris tabel
+        document.querySelectorAll('.hapus-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const nama = this.getAttribute('data-nama');
+                const kode = this.getAttribute('data-kode');
+
+                document.getElementById('hapusNamaBarang').innerText = `[${kode}] ${nama}`;
+                // Mengatur atribut action form modal hapus dengan ID barang
+                document.getElementById('formHapus').action = `/admin/sparepart/delete/${id}`;
             });
         });
     </script>
