@@ -24,10 +24,14 @@ app.use(express.json());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// Konfigurasi Session dengan durasi 12 jam
 app.use(session({
     secret: process.env.SESSION_SECRET || 'rahasia_super_aman_123',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: { 
+        maxAge: 12 * 60 * 60 * 1000 // 12 jam dalam milidetik
+    }
 }));
 
 // --- OPTIMASI KONEKSI MONGODB UNTUK SERVERLESS (VERCEL) ---
@@ -63,13 +67,27 @@ app.use(async (req, res, next) => {
     }
 });
 
+// Middleware Autentikasi dengan Auto-Destroy Session jika Expired
 const isAuthenticated = (req, res, next) => {
-    if (req.session.user) return next();
-    res.redirect('/login');
+    if (req.session && req.session.user) {
+        return next();
+    }
+    req.session.destroy(() => {
+        res.redirect('/login?error=Session+expired.+Please+login+again.');
+    });
 };
 
 const isAdmin = (req, res, next) => {
-    if (req.session.user && req.session.user.role === 'admin') return next();
+    if (req.session && req.session.user && req.session.user.role === 'admin') {
+        return next();
+    }
+    
+    if (!req.session || !req.session.user) {
+        return req.session.destroy(() => {
+            res.redirect('/login?error=Session+expired.+Please+login+again.');
+        });
+    }
+
     Sparepart.find().then(spareparts => {
         res.status(403).render('admin-sparepart', {
             user: req.session.user,
@@ -84,7 +102,11 @@ const isAdmin = (req, res, next) => {
 
 // --- ROUTES AUTHENTICATION ---
 app.get('/', (req, res) => res.redirect('/login'));
-app.get('/login', (req, res) => res.render('login', { error: null }));
+
+app.get('/login', (req, res) => {
+    const errorMsg = req.query.error || null;
+    res.render('login', { error: errorMsg });
+});
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
