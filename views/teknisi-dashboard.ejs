@@ -1,42 +1,255 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Dashboard Teknisi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTC.SYS — Dashboard Teknisi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --radius-ios: 16px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navbar Clean Glassmorphism */
+        .navbar {
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #0f172a !important;
+        }
+
+        /* Card Container */
+        .ios-card {
+            background: var(--card-bg);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-ios);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02);
+        }
+
+        /* Form Controls & Inputs */
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            background-color: #ffffff;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05);
+        }
+
+        /* Buttons Style */
+        .btn {
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-dark {
+            background-color: #0f172a;
+            border: none;
+        }
+        .btn-dark:hover {
+            background-color: #1e293b;
+        }
+        .btn-light-subtle {
+            background-color: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+        .btn-light-subtle:hover {
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+
+        /* Offcanvas Sidebar Kiri ala iOS */
+        .offcanvas {
+            border-top-right-radius: 24px;
+            border-bottom-right-radius: 24px;
+            border: none;
+            box-shadow: 10px 0 40px rgba(15, 23, 42, 0.1);
+        }
+        .offcanvas-header {
+            padding: 24px 24px 10px 24px;
+        }
+        .offcanvas-body {
+            padding: 20px 24px;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            margin-bottom: 6px;
+            transition: all 0.2s;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+        }
+
+        /* Tabel Minimalis */
+        .table {
+            color: var(--text-main);
+            white-space: nowrap;
+            margin-bottom: 0;
+        }
+        .table > thead > tr > th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 14px;
+        }
+        .table > tbody > tr > td {
+            padding: 12px 14px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        /* Modal Styling */
+        .modal-content {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+        }
+        .modal-header, .modal-footer {
+            border-color: #f1f5f9;
+            padding: 18px 20px;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-dark bg-secondary px-4 navbar-expand">
-        <span class="navbar-brand mb-0 h1">Teknisi Dashboard</span>
-        <div class="navbar-nav ms-auto">
-            <a href="/teknisi/dashboard" class="nav-link active fw-bold">Input Perbaikan</a>
-            <a href="/teknisi/sparepart" class="nav-link">Cari Sparepart</a>
-            <a href="/logout" class="btn btn-outline-light btn-sm ms-3">Logout</a>
+<body>
+
+    <!-- Navbar dengan Tombol Menu Sidebar (Kiri) -->
+    <nav class="navbar navbar-expand px-4 sticky-top">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-light-subtle d-flex align-items-center justify-content-center p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#leftSidebar" aria-controls="leftSidebar" style="width: 38px; height: 38px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                </svg>
+            </button>
+            <span class="navbar-brand mb-0 h1">MTC.SYS</span>
+        </div>
+        <div class="navbar-nav ms-auto align-items-center">
+            <span class="text-muted small d-none d-sm-inline">Teknisi Dashboard</span>
         </div>
     </nav>
+
+    <!-- Offcanvas Sidebar Muncul dari Kiri -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="leftSidebar" aria-labelledby="leftSidebarLabel" style="width: 280px;">
+        <div class="offcanvas-header border-0 pb-0">
+            <h5 class="offcanvas-title fw-bold" id="leftSidebarLabel">MTC.SYS</h5>
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-between">
+            <div>
+                <p class="text-muted small mb-3 px-2">Menu Navigasi</p>
+                <div class="list-unstyled">
+                    <a href="/teknisi/dashboard" class="sidebar-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-plus me-3" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
+                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                        </svg>
+                        Input Perbaikan
+                    </a>
+                    <a href="/teknisi/sparepart" class="sidebar-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search me-3" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.098zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                        Cari Sparepart
+                    </a>
+                </div>
+            </div>
+            <div class="pt-3 border-top">
+                <a href="/logout" class="sidebar-item text-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left me-3" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
+                        <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
     <div class="container my-4">
-        <div class="card p-4 shadow-sm mb-4">
-            <h4>Form Kegiatan Perbaikan</h4>
-            <form action="/repair/add" method="POST" class="row g-3 mt-2">
-                <div class="col-md-4"><label class="form-label">Tanggal</label><input type="date" name="tanggal" class="form-control" required></div>
-                <div class="col-md-4"><label class="form-label">Shift</label><input type="text" name="shift" class="form-control" required></div>
-                <div class="col-md-4"><label class="form-label">Nama Mesin</label><input type="text" name="namaMesin" class="form-control" required></div>
+        
+        <!-- Form Kegiatan Perbaikan -->
+        <div class="ios-card p-4 mb-4">
+            <h5 class="fw-bold mb-3" style="letter-spacing: -0.5px;">Form Kegiatan Perbaikan</h5>
+            <form action="/repair/add" method="POST" class="row g-3 mt-1">
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-semibold">Tanggal</label>
+                    <input type="date" name="tanggal" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-semibold">Shift</label>
+                    <input type="text" name="shift" class="form-control" placeholder="Contoh: Shift 1" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-semibold">Nama Mesin</label>
+                    <input type="text" name="namaMesin" class="form-control" placeholder="Nama mesin..." required>
+                </div>
                 
-                <div class="col-md-6"><label class="form-label">Problem</label><textarea name="problem" class="form-control" required></textarea></div>
-                <div class="col-md-6"><label class="form-label">Analisa Penyebab</label><textarea name="analisaPenyebab" class="form-control"></textarea></div>
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-semibold">Problem</label>
+                    <textarea name="problem" class="form-control" rows="2" placeholder="Deskripsikan masalah..." required></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-semibold">Analisa Penyebab</label>
+                    <textarea name="analisaPenyebab" class="form-control" rows="2" placeholder="Analisa kerusakan..."></textarea>
+                </div>
                 
-                <div class="col-md-6"><label class="form-label">Cara Perbaikan</label><textarea name="caraPerbaikan" class="form-control"></textarea></div>
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-semibold">Cara Perbaikan</label>
+                    <textarea name="caraPerbaikan" class="form-control" rows="2" placeholder="Tindakan perbaikan..."></textarea>
+                </div>
                 
                 <!-- Multi Sparepart Input dengan Fitur Pencarian -->
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Sparepart yang Digunakan</label>
+                    <label class="form-label text-muted small fw-semibold">Sparepart yang Digunakan</label>
                     <div id="sparepartContainer">
-                        <div class="border p-3 mb-2 rounded bg-white sparepart-row shadow-sm">
+                        <div class="border p-3 mb-2 rounded bg-light sparepart-row shadow-sm border-0">
                             <div class="mb-2">
                                 <input type="text" class="form-control form-control-sm search-sparepart" placeholder="Cari sparepart (nama, kode, type, lokasi, fungsi)..." onkeyup="filterSparepartOptions(this)">
                             </div>
                             <div class="row g-2">
                                 <div class="col-md-8">
-                                    <select name="sparepartIds" class="form-control sparepart-select" required>
+                                    <select name="sparepartIds" class="form-select form-select-sm sparepart-select" required>
                                         <option value="">-- Pilih Sparepart --</option>
                                         <% spareparts.forEach(s => { %>
                                             <option value="<%= s._id %>" data-keywords="<%= (s.namaBarang + ' ' + s.kodeBarang + ' ' + (s.typeBarang || '') + ' ' + (s.lokasiBarang || '') + ' ' + (s.fungsiBarang || '')).toLowerCase() %>">
@@ -46,49 +259,74 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="number" name="jumlahPakais" class="form-control" placeholder="Qty" value="1" min="1" required>
+                                    <input type="number" name="jumlahPakais" class="form-control form-control-sm" placeholder="Qty" value="1" min="1" required>
                                 </div>
                                 <div class="col-md-1">
-                                    <button type="button" class="btn btn-danger w-100" onclick="this.closest('.sparepart-row').remove()">X</button>
+                                    <button type="button" class="btn btn-danger btn-sm w-100 py-1" onclick="this.closest('.sparepart-row').remove()">X</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline-secondary mt-1" onclick="addSparepartRow()">+ Tambah Sparepart Lain</button>
+                    <button type="button" class="btn btn-sm btn-light-subtle text-dark mt-1 fw-semibold" onclick="addSparepartRow()">+ Tambah Sparepart Lain</button>
                 </div>
 
-                <div class="col-md-3"><label class="form-label">PIC</label><input type="text" name="pic" class="form-control" required></div>
-                <div class="col-md-3"><label class="form-label">Jam Mulai</label><input type="time" name="jamMulai" class="form-control" required></div>
-                <div class="col-md-3"><label class="form-label">Jam Selesai</label><input type="time" name="jamSelesai" class="form-control" required></div>
                 <div class="col-md-3">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-control">
+                    <label class="form-label text-muted small fw-semibold">PIC</label>
+                    <input type="text" name="pic" class="form-control" placeholder="Nama teknisi" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-semibold">Jam Mulai</label>
+                    <input type="time" name="jamMulai" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-semibold">Jam Selesai</label>
+                    <input type="time" name="jamSelesai" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-semibold">Status</label>
+                    <select name="status" class="form-select">
                         <option value="open">Open</option>
                         <option value="progress">Progress</option>
                         <option value="ok">OK</option>
                     </select>
                 </div>
-                <div class="col-md-12"><label class="form-label">Keterangan</label><input type="text" name="keterangan" class="form-control"></div>
+                <div class="col-md-12">
+                    <label class="form-label text-muted small fw-semibold">Keterangan</label>
+                    <input type="text" name="keterangan" class="form-control" placeholder="Catatan tambahan (opsional)">
+                </div>
 
-                <div class="col-md-12"><button type="submit" class="btn btn-primary w-100">Simpan Laporan & Ambil Sparepart</button></div>
+                <div class="col-md-12 pt-2">
+                    <button type="submit" class="btn btn-dark w-100 py-2">Simpan Laporan & Ambil Sparepart</button>
+                </div>
             </form>
         </div>
 
-        <div class="card p-4 shadow-sm">
-            <h4>Riwayat Semua Perbaikan</h4>
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered table-striped table-sm align-middle" style="font-size: 13px;">
-                    <thead class="table-secondary">
+        <!-- Riwayat Semua Perbaikan -->
+        <div class="ios-card p-4">
+            <h5 class="fw-bold mb-3" style="letter-spacing: -0.5px;">Riwayat Semua Perbaikan</h5>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
                         <tr>
-                            <th>Tanggal</th><th>Shift</th><th>Mesin</th><th>Problem</th><th>Perbaikan</th><th>Sparepart Dipakai</th><th>PIC</th><th>Status</th>
+                            <th>Tanggal</th>
+                            <th>Shift</th>
+                            <th>Mesin</th>
+                            <th>Problem</th>
+                            <th>Perbaikan</th>
+                            <th>Sparepart Dipakai</th>
+                            <th>PIC</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <% if(repairs.length === 0) { %>
+                            <tr><td colspan="8" class="text-center py-4 text-muted">Belum ada riwayat perbaikan.</td></tr>
+                        <% } %>
                         <% repairs.forEach(r => { %>
                         <tr>
-                            <td><%= r.tanggal ? r.tanggal.toISOString().split('T')[0] : '' %></td>
+                            <td class="fw-semibold text-secondary"><%= r.tanggal ? r.tanggal.toISOString().split('T')[0] : '' %></td>
                             <td><%= r.shift %></td>
-                            <td><%= r.namaMesin %></td>
+                            <td class="fw-bold text-dark"><%= r.namaMesin %></td>
                             <td><%= r.problem %></td>
                             <td><%= r.caraPerbaikan %></td>
                             <td>
@@ -103,24 +341,49 @@
                                 <% } %>
                             </td>
                             <td><%= r.pic %></td>
-                            <td><span class="badge bg-<%= r.status=='ok'?'success':(r.status=='progress'?'warning':'danger') %>"><%= r.status.toUpperCase() %></span></td>
+                            <td>
+                                <span class="badge bg-<%= r.status=='ok'?'success':(r.status=='progress'?'warning':'danger') %> px-2 py-1 rounded-pill fw-medium">
+                                    <%= r.status.toUpperCase() %>
+                                </span>
+                            </td>
                         </tr>
                         <% }) %>
                     </tbody>
                 </table>
             </div>
 
-            <nav class="mt-3">
-                <ul class="pagination justify-content-center">
+            <!-- Pagination -->
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center mb-0">
                     <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
-                        <a class="page-link" href="/teknisi/dashboard?page=<%= currentPage - 1 %>">Previous</a>
+                        <a class="page-link border-0 text-dark fw-semibold bg-light rounded-start-pill px-3" href="/teknisi/dashboard?page=<%= currentPage - 1 %>">Previous</a>
                     </li>
-                    <li class="page-item disabled"><span class="page-link">Halaman <%= currentPage %> dari <%= totalPages %></span></li>
+                    <li class="page-item disabled">
+                        <span class="page-link border-0 bg-transparent text-muted">Halaman <%= currentPage %> dari <%= totalPages %></span>
+                    </li>
                     <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
-                        <a class="page-link" href="/teknisi/dashboard?page=<%= currentPage + 1 %>">Next</a>
+                        <a class="page-link border-0 text-dark fw-semibold bg-light rounded-end-pill px-3" href="/teknisi/dashboard?page=<%= currentPage + 1 %>">Next</a>
                     </li>
                 </ul>
             </nav>
+        </div>
+    </div>
+
+    <!-- Pop-up Modal untuk Error / Pesan Gagal -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 340px;">
+            <div class="modal-content border-0 p-3 text-center">
+                <div class="modal-body">
+                    <div class="mb-3 text-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold mb-2">Pemberitahuan</h5>
+                    <p class="text-muted small mb-4"><%= typeof error !== 'undefined' ? error : '' %></p>
+                    <button type="button" class="btn btn-dark w-100 py-2" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -157,6 +420,14 @@
         newRow.querySelector('input[name="jumlahPakais"]').value = "1";
         container.appendChild(newRow);
     }
+
+    // Trigger Pop-up Modal jika ada Error
+    <% if(typeof error !== 'undefined' && error) { %>
+    document.addEventListener("DOMContentLoaded", function() {
+        new bootstrap.Modal(document.getElementById('errorModal')).show();
+    });
+    <% } %>
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
