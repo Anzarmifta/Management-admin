@@ -1,36 +1,222 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Cari Sparepart - Teknisi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTC.SYS — Cari Sparepart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --radius-ios: 16px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navbar Clean Glassmorphism */
+        .navbar {
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #0f172a !important;
+        }
+
+        /* Card Container */
+        .ios-card {
+            background: var(--card-bg);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-ios);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02);
+        }
+
+        /* Form Controls & Inputs */
+        .form-control {
+            border-radius: 10px;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            background-color: #ffffff;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        .form-control:focus {
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05);
+        }
+
+        /* Buttons Style */
+        .btn {
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-dark {
+            background-color: #0f172a;
+            border: none;
+        }
+        .btn-dark:hover {
+            background-color: #1e293b;
+        }
+        .btn-light-subtle {
+            background-color: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+        .btn-light-subtle:hover {
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+
+        /* Offcanvas Sidebar Kiri ala iOS */
+        .offcanvas {
+            border-top-right-radius: 24px;
+            border-bottom-right-radius: 24px;
+            border: none;
+            box-shadow: 10px 0 40px rgba(15, 23, 42, 0.1);
+        }
+        .offcanvas-header {
+            padding: 24px 24px 10px 24px;
+        }
+        .offcanvas-body {
+            padding: 20px 24px;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            margin-bottom: 6px;
+            transition: all 0.2s;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+        }
+
+        /* Tabel Minimalis */
+        .table {
+            color: var(--text-main);
+            white-space: nowrap;
+            margin-bottom: 0;
+        }
+        .table > thead > tr > th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 14px;
+        }
+        .table > tbody > tr > td {
+            padding: 12px 14px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        /* Modal Styling */
+        .modal-content {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+        }
+        .modal-body {
+            padding: 20px;
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-dark bg-secondary px-4 navbar-expand">
-        <span class="navbar-brand mb-0 h1">Teknisi Panel</span>
-        <div class="navbar-nav ms-auto">
-            <a href="/teknisi/dashboard" class="nav-link">Input Perbaikan</a>
-            <a href="/teknisi/sparepart" class="nav-link active fw-bold">Cari Sparepart</a>
-            <a href="/logout" class="btn btn-outline-light btn-sm ms-3">Logout</a>
+<body>
+
+    <!-- Navbar dengan Tombol Menu Sidebar (Kiri) -->
+    <nav class="navbar navbar-expand px-4 sticky-top">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-light-subtle d-flex align-items-center justify-content-center p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#leftSidebar" aria-controls="leftSidebar" style="width: 38px; height: 38px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                </svg>
+            </button>
+            <span class="navbar-brand mb-0 h1">MTC.SYS</span>
+        </div>
+        <div class="navbar-nav ms-auto align-items-center">
+            <span class="text-muted small d-none d-sm-inline">Teknisi Panel</span>
         </div>
     </nav>
 
-    <div class="container my-4">
-        <div class="card p-4 shadow-sm mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4>Pencarian Data Sparepart</h4>
+    <!-- Offcanvas Sidebar Muncul dari Kiri -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="leftSidebar" aria-labelledby="leftSidebarLabel" style="width: 280px;">
+        <div class="offcanvas-header border-0 pb-0">
+            <h5 class="offcanvas-title fw-bold" id="leftSidebarLabel">MTC.SYS</h5>
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-between">
+            <div>
+                <p class="text-muted small mb-3 px-2">Menu Navigasi</p>
+                <div class="list-unstyled">
+                    <a href="/teknisi/dashboard" class="sidebar-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-plus me-3" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
+                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                        </svg>
+                        Input Perbaikan
+                    </a>
+                    <a href="/teknisi/sparepart" class="sidebar-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search me-3" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.098zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                        Cari Sparepart
+                    </a>
+                </div>
             </div>
+            <div class="pt-3 border-top">
+                <a href="/logout" class="sidebar-item text-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left me-3" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
+                        <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
 
-            <form action="/teknisi/sparepart" method="GET" class="input-group mb-3">
-                <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan nama, kode, lokasi, type, atau fungsi..." value="<%= search %>">
-                <button class="btn btn-outline-secondary" type="submit">Cari</button>
+    <!-- Main Content -->
+    <div class="container my-4">
+        <div class="ios-card p-4">
+            <h5 class="fw-bold mb-3" style="letter-spacing: -0.5px;">Pencarian Data Sparepart</h5>
+
+            <form action="/teknisi/sparepart" method="GET" class="d-flex gap-2 mb-4">
+                <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan nama, kode, lokasi, type, atau fungsi..." value="<%= search %>" autocomplete="off">
+                <button class="btn btn-dark px-4" type="submit">Cari</button>
                 <% if(search) { %>
-                    <a href="/teknisi/sparepart" class="btn btn-outline-danger">Reset</a>
+                    <a href="/teknisi/sparepart" class="btn btn-light-subtle text-danger">Reset</a>
                 <% } %>
             </form>
 
             <div class="table-responsive">
-                <table class="table table-bordered table-striped align-middle">
-                    <thead class="table-secondary">
+                <table class="table align-middle">
+                    <thead>
                         <tr>
                             <th>Kode Barang</th>
                             <th>Nama Barang</th>
@@ -42,16 +228,16 @@
                     </thead>
                     <tbody>
                         <% if(spareparts.length === 0) { %>
-                            <tr><td colspan="6" class="text-center">Tidak ada sparepart yang ditemukan.</td></tr>
+                            <tr><td colspan="6" class="text-center py-4 text-muted">Tidak ada sparepart yang ditemukan.</td></tr>
                         <% } %>
                         <% spareparts.forEach(s => { %>
                         <tr>
-                            <td><%= s.kodeBarang %></td>
-                            <td><%= s.namaBarang %></td>
+                            <td class="fw-semibold text-secondary"><%= s.kodeBarang %></td>
+                            <td class="fw-bold text-dark"><%= s.namaBarang %></td>
                             <td><%= s.lokasiBarang || '-' %></td>
                             <td><%= s.typeBarang || '-' %></td>
                             <td>
-                                <span class="badge bg-<%= s.stokBarang > 0 ? 'success' : 'danger' %>">
+                                <span class="badge bg-<%= s.stokBarang > 0 ? 'success' : 'danger' %> px-2 py-1 rounded-pill fw-medium">
                                     <%= s.stokBarang %>
                                 </span>
                             </td>
@@ -64,6 +250,32 @@
         </div>
     </div>
 
+    <!-- Pop-up Modal untuk Error -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 340px;">
+            <div class="modal-content border-0 p-3 text-center">
+                <div class="modal-body">
+                    <div class="mb-3 text-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold mb-2">Pemberitahuan</h5>
+                    <p class="text-muted small mb-4"><%= typeof error !== 'undefined' ? error : '' %></p>
+                    <button type="button" class="btn btn-dark w-100 py-2" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Trigger Pop-up Modal jika ada Error
+        <% if(typeof error !== 'undefined' && error) { %>
+        document.addEventListener("DOMContentLoaded", function() {
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        });
+        <% } %>
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
