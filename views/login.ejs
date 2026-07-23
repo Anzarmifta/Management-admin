@@ -1,26 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Login - Manajemen Sparepart by zarski</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Manajemen Sparepart</title>
+    <!-- Google Fonts: Plus Jakarta Sans untuk kesan modern & Gen Z -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8f9fa;
+            color: #1a1a1a;
+        }
+        .login-card {
+            border: none;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04)!important;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            font-size: 0.95rem;
+        }
+        .form-control:focus {
+            background-color: #fff;
+            border-color: #0f172a;
+            box-shadow: none;
+        }
+        .btn-dark {
+            border-radius: 10px;
+            padding: 12px;
+            background-color: #0f172a;
+            border: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-dark:hover {
+            background-color: #1e293b;
+            transform: translateY(-1px);
+        }
+        .form-label {
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #475569;
+        }
+        .powered-text {
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            text-transform: lowercase;
+        }
+    </style>
 </head>
-<body class="bg-light d-flex align-items-center justify-content-center vh-100">
-    <div class="card shadow p-4" style="width: 350px;">
-        <h3 class="text-center mb-3">Login Sistem</h3>
-        <% if(error) { %>
-            <div class="alert alert-danger"><%= error %></div>
-        <% } %>
+<body class="d-flex align-items-center justify-content-center vh-100">
+
+    <div class="card login-card p-4 p-md-5" style="width: 380px;">
+        <div class="text-center mb-4">
+            <h4 class="fw-bold mb-1" style="letter-spacing: -0.5px;">Welcome Back</h4>
+            <p class="text-muted small">Manajemen Sparepart System</p>
+        </div>
+
         <form action="/login" method="POST">
             <div class="mb-3">
                 <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control" required>
+                <input type="text" name="username" class="form-control" placeholder="Masukkan username" required autocomplete="off">
             </div>
-            <div class="mb-3">
+            <div class="mb-4">
                 <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" required>
+                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
+            <button type="submit" class="btn btn-dark w-100 mb-4">Sign In</button>
         </form>
+
+        <div class="text-center mt-2">
+            <span class="powered-text">powered by zarski</span>
+        </div>
     </div>
+
+    <!-- Modal Pop-up Jika Gagal Login -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 320px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+                <div class="modal-body text-center p-4">
+                    <div class="mb-3 text-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold mb-2">Gagal Masuk</h5>
+                    <p class="text-muted small mb-4" id="errorMessage"><%= error ? error : '' %></p>
+                    <button type="button" class="btn btn-dark w-100 rounded-pill btn-sm py-2" data-bs-dismiss="modal">Coba Lagi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <% if(error) { %>
+    <script>
+        // Otomatis memunculkan modal pop-up jika variabel 'error' dari backend terisi
+        document.addEventListener("DOMContentLoaded", function() {
+            var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            myModal.show();
+        });
+    </script>
+    <% } %>
 </body>
 </html>
