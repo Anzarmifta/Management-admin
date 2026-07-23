@@ -166,6 +166,7 @@
         </div>
     </nav>
 
+    <!-- Sidebar Kiri dengan Menu Manajemen Akun -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="leftSidebar" aria-labelledby="leftSidebarLabel" style="width: 280px;">
         <div class="offcanvas-header border-0 pb-0">
             <h5 class="offcanvas-title fw-bold" id="leftSidebarLabel">MTC.SYS</h5>
@@ -187,6 +188,12 @@
                         </svg>
                         Repair Logs
                     </a>
+                    <a href="/admin/users" class="sidebar-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people me-3" viewBox="0 0 16 16">
+                            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-9.975-.944c.5-.349 1.8-.956 3.975-.956.5 0 1.25.12 1.95.42-.515.337-1.07.75-1.55 1.25-.4.415-.84 1.01-1.15 1.77h-3.225v-.494c0-.365.174-.702.475-.99zM8 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6 5.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/>
+                        </svg>
+                        Manajemen Akun
+                    </a>
                 </div>
             </div>
             <div class="pt-3 border-top">
@@ -203,30 +210,9 @@
 
     <div class="container my-4">
         
+        <!-- Kotak Form Buat Akun Dihapus dari Sini dan Dipindah ke Halaman Khusus -->
         <div class="row g-4 mb-4">
-            <div class="col-12 col-lg-6">
-                <div class="ios-card p-4 h-100">
-                    <h6 class="fw-bold mb-3">Buat Akun User Baru</h6>
-                    <form action="/admin/user/add" method="POST" class="row g-2">
-                        <div class="col-12 col-sm-4">
-                            <input type="text" name="username" class="form-control" placeholder="Username" required autocomplete="off">
-                        </div>
-                        <div class="col-12 col-sm-4">
-                            <input type="password" name="password" class="form-control" placeholder="Password" required>
-                        </div>
-                        <div class="col-6 col-sm-2">
-                            <select name="role" class="form-select">
-                                <option value="teknisi">Teknisi</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-                        <div class="col-6 col-sm-2">
-                            <button type="submit" class="btn btn-dark w-100">Buat</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-12 col-lg-6">
+            <div class="col-12">
                 <div class="ios-card p-4 h-100">
                     <h6 class="fw-bold mb-3">Export Laporan Perbaikan</h6>
                     <form action="/admin/repair/export" method="GET" class="row g-2">
@@ -370,7 +356,6 @@
             document.getElementById('weekEndBox').style.display = val === 'week' ? 'block' : 'none';
         }
 
-        // Trigger Pop-up Modal jika ada Error/Akses Ditolak
         <% if(typeof error !== 'undefined' && error) { %>
         document.addEventListener("DOMContentLoaded", function() {
             new bootstrap.Modal(document.getElementById('errorModal')).show();
