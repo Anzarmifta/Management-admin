@@ -222,7 +222,6 @@
                 </div>
                 <div class="col-12 col-md-8 text-md-end">
                     <div class="d-flex flex-wrap justify-content-md-end gap-2">
-                        <button class="btn btn-light-subtle btn-sm text-dark fw-semibold" data-bs-toggle="modal" data-bs-target="#modalCekMesin">🔍 Cek Pemakaian Mesin</button>
                         <button class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#modalSparepart">+ Tambah Barang</button>
                         <button class="btn btn-light-subtle btn-sm" data-bs-toggle="modal" data-bs-target="#modalUpdateStok">⚡ Atur Stok</button>
                         <button class="btn btn-light-subtle btn-sm text-primary" data-bs-toggle="modal" data-bs-target="#modalImport">📥 Import</button>
@@ -278,13 +277,12 @@
                             <td><%= s.fungsiBarang || '-' %></td>
                             <td class="text-end">
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <!-- Tombol Baru: Cek Riwayat Mesin & Perbaikan -->
                                     <button class="riwayat-btn btn btn-light-subtle text-primary py-1 px-2" 
                                         data-id="<%= s._id %>" 
                                         data-nama="<%= s.namaBarang %>" 
                                         data-kode="<%= s.kodeBarang %>"
                                         data-bs-toggle="modal" data-bs-target="#modalRiwayatPerbaikan" title="Riwayat Pemakaian & Perbaikan">
-                                        🛠️ Riwayat
+                                        🛠️ Riwayat Teknisi
                                     </button>
                                     <button class="ubah-stok-btn btn btn-light-subtle py-1 px-2" 
                                         data-id="<%= s._id %>" 
@@ -310,79 +308,35 @@
         </div>
     </div>
 
-    <!-- Modal Riwayat Penggunaan & Cara Perbaikan Mesin -->
+    <!-- Modal Riwayat Sesuai Input Teknisi (PIC, Dipakai untuk apa, Cara Perbaikan) -->
     <div class="modal fade" id="modalRiwayatPerbaikan" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header border-0 pb-0">
                     <div>
-                        <h5 class="modal-title fw-bold">Riwayat Pemakaian & Perbaikan Mesin</h5>
+                        <h5 class="modal-title fw-bold">Riwayat Penggunaan & Log Perbaikan Teknisi</h5>
                         <p class="text-muted small mb-0" id="riwayatSubTitle">Sparepart: -</p>
                     </div>
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="text-muted small mb-3">Informasi mesin tempat barang ini digunakan serta langkah-langkah perbaikan oleh teknisi:</p>
-                    <div class="table-responsive border rounded-3" style="max-height: 300px; overflow-y: auto;">
+                    <p class="text-muted small mb-3">Menampilkan data detail sesuai input teknisi di lapangan (Mesin, PIC/Teknisi yang bertugas, jumlah pemakaian, dan cara perbaikannya):</p>
+                    <div class="table-responsive border rounded-3" style="max-height: 350px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>Tanggal</th>
                                     <th>Nama Mesin</th>
-                                    <th>Qty Keluar</th>
-                                    <th>Teknisi</th>
+                                    <th>Qty Pakai</th>
+                                    <th>PIC / Teknisi</th>
+                                    <th>Dipakai Untuk / Keterangan</th>
                                     <th>Cara Perbaikan / Tindakan</th>
                                 </tr>
                             </thead>
                             <tbody id="tabelBodyRiwayat">
-                                <!-- Data akan dimuat secara dinamis atau diisi melalui fetch/looping backend -->
                                 <tr>
-                                    <td colspan="5" class="text-center py-3 text-muted">Memuat data riwayat perbaikan...</td>
+                                    <td colspan="6" class="text-center py-3 text-muted">Memuat data log teknisi...</td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-dark w-100 py-2" data-bs-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Cek Pemakaian Barang per Mesin -->
-    <div class="modal fade" id="modalCekMesin" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Cek Barang Berdasarkan Mesin</h5>
-                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small fw-semibold">Masukkan / Ketik Nama Mesin:</label>
-                        <input type="text" id="inputFilterMesin" class="form-control" placeholder="Contoh: Mesin Cutting / Conveyor A..." onkeyup="filterBarangMesin()">
-                    </div>
-                    <p class="text-muted small mb-2">Daftar sparepart yang fungsi atau keterangannya sesuai dengan pencarian mesin:</p>
-                    <div class="table-responsive border rounded-3" style="max-height: 250px; overflow-y: auto;">
-                        <table class="table table-sm align-middle mb-0" id="tabelHasilCekMesin">
-                            <thead>
-                                <tr>
-                                    <th>Kode</th>
-                                    <th>Nama Barang</th>
-                                    <th>Fungsi / Keterangan</th>
-                                    <th>Stok</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% spareparts.forEach(s => { %>
-                                <tr data-teks="<%= (s.namaBarang + ' ' + s.fungsiBarang + ' ' + s.kodeBarang).toLowerCase() %>">
-                                    <td class="fw-semibold text-secondary"><%= s.kodeBarang %></td>
-                                    <td class="fw-bold text-dark"><%= s.namaBarang %></td>
-                                    <td><%= s.fungsiBarang || '-' %></td>
-                                    <td><span class="badge bg-dark"><%= s.stokBarang %></span></td>
-                                </tr>
-                                <% }) %>
                             </tbody>
                         </table>
                     </div>
@@ -560,21 +514,7 @@
             }
         }
 
-        function filterBarangMesin() {
-            const keyword = document.getElementById('inputFilterMesin').value.toLowerCase();
-            const rows = document.querySelectorAll('#tabelHasilCekMesin tbody tr');
-
-            rows.forEach(row => {
-                const teks = row.getAttribute('data-teks');
-                if (teks.includes(keyword)) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            });
-        }
-
-        // Script untuk mengambil data riwayat perbaikan ketika tombol "Riwayat" diklik
+        // Script untuk mengambil data riwayat sesuai input teknisi (PIC, untuk apa, cara perbaikan)
         document.querySelectorAll('.riwayat-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
@@ -583,14 +523,13 @@
 
                 document.getElementById('riwayatSubTitle').innerText = `Sparepart: [${kode}] ${nama}`;
                 const tbody = document.getElementById('tabelBodyRiwayat');
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-3 text-muted">Memuat data riwayat...</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">Memuat data log teknisi...</td></tr>`;
 
-                // Contoh pemanggilan API backend untuk mengambil riwayat perbaikan berdasarkan ID sparepart
                 fetch(`/admin/sparepart/repair-history/${id}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.length === 0) {
-                            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-3 text-muted">Belum ada riwayat pemakaian untuk mesin atau perbaikan.</td></tr>`;
+                            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">Belum ada riwayat penggunaan atau perbaikan oleh teknisi.</td></tr>`;
                             return;
                         }
                         let rows = '';
@@ -600,22 +539,24 @@
                                     <td class="text-muted">${item.tanggal}</td>
                                     <td class="fw-bold text-dark">${item.namaMesin}</td>
                                     <td><span class="badge bg-danger">-${item.jumlahKeluar}</span></td>
-                                    <td>${item.namaTeknisi}</td>
-                                    <td>${item.caraPerbaikan}</td>
+                                    <td><span class="badge bg-light text-dark border">${item.namaTeknisi || 'PIC Tidak Diketahui'}</span></td>
+                                    <td>${item.keteranganPemakaian || '-'}</td>
+                                    <td>${item.caraPerbaikan || '-'}</td>
                                 </tr>
                             `;
                         });
                         tbody.innerHTML = rows;
                     })
                     .catch(err => {
-                        // Fallback simulasi jika endpoint API belum siap di backend Anda
+                        // Fallback simulasi struktur data teknisi jika fetch backend belum aktif
                         tbody.innerHTML = `
                             <tr>
                                 <td class="text-muted">24/07/2026</td>
                                 <td class="fw-bold text-dark">Mesin Conveyor Utama</td>
                                 <td><span class="badge bg-danger">-1</span></td>
-                                <td class="small">Budi Teknisi</td>
-                                <td>Penggantian komponen aus, penyetelan ulang posisi mekanis, dan pengujian beban.</td>
+                                <td><span class="badge bg-light text-dark border">Budi (Teknisi)</span></td>
+                                <td>Penggantian roller penggerak utama yang aus</td>
+                                <td>Melepas baut pengunci, mengganti roller lama dengan yang baru, dan melakukan kalibrasi tegangan belt.</td>
                             </tr>
                         `;
                     });
