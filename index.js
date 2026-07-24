@@ -16,29 +16,29 @@ const Repair = require('./models/Repair');
 
 const app = express();
 
-// WAJIB UNTUK VERCEL: Agar cookie aman & session terbaca di balik reverse proxy
+// WAJIB UNTUK VERCEL & PROXY
 app.set('trust proxy', 1);
 
-const upload = multer({ storage: multer.memoryStorage() });
+// Naikkan limit payload menjadi 50MB untuk mengantisipasi file import besar (20MB+)
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: '50mb' }));
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 50 * 1024 * 1024 } // Batasan file 50MB di Multer
+});
 
-// Pengaturan Path Absolut Views untuk Vercel
+// Pengaturan Path Absolut Views
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// --- OPTIMASI KONEKSI MONGODB UNTUK SERVERLESS (VERCEL) ---
+// --- KONEKSI MONGODB ---
 const mongoUri = process.env.MONGODB_URI;
 
 async function connectDB() {
-    if (mongoose.connection.readyState >= 1) {
-        return;
-    }
+    if (mongoose.connection.readyState >= 1) return;
     try {
-        await mongoose.connect(mongoUri, {
-            serverSelectionTimeoutMS: 5000,
-        });
+        await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 5000 });
         console.log('MongoDB Connected Successfully');
     } catch (err) {
         console.error('MongoDB Connection Error:', err);
@@ -46,64 +46,42 @@ async function connectDB() {
     }
 }
 
-// Konfigurasi Session Standar Express (Tanpa MongoStore)
+// Konfigurasi Session
 app.use(session({
     secret: process.env.SESSION_SECRET || 'rahasia_super_aman_123',
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        maxAge: 12 * 60 * 60 * 1000, // 12 jam dalam milidetik
-        secure: process.env.NODE_ENV === 'production', // true saat di production (HTTPS), false jika lokal
+        maxAge: 12 * 60 * 60 * 1000,
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
         sameSite: 'lax'
     }
 }));
 
-// Middleware agar koneksi database selalu dicek di setiap request
+// Middleware Cek Koneksi DB
 app.use(async (req, res, next) => {
     try {
         await connectDB();
         next();
     } catch (err) {
-        res.status(500).render('admin-sparepart', { 
-            user: req.session.user || null, 
-            spareparts: [], 
-            search: '', 
-            error: 'Koneksi database gagal: ' + err.message 
-        });
+        res.status(500).send('Koneksi database gagal: ' + err.message);
     }
 });
 
-// Middleware Autentikasi
+// Middleware Auth
 const isAuthenticated = (req, res, next) => {
-    if (req.session && req.session.user) {
-        return next();
-    }
+    if (req.session && req.session.user) return next();
     res.redirect('/login?error=Session+expired.+Please+login+again.');
 };
 
 const isAdmin = (req, res, next) => {
-    if (req.session && req.session.user && req.session.user.role === 'admin') {
-        return next();
-    }
-    
-    if (!req.session || !req.session.user) {
-        return res.redirect('/login?error=Session+expired.+Please+login+again.');
-    }
-
-    Sparepart.find().then(spareparts => {
-        res.status(403).render('admin-sparepart', {
-            user: req.session.user,
-            spareparts,
-            search: '',
-            error: 'Akses Ditolak: Fitur ini khusus untuk Admin!'
-        });
-    }).catch(() => {
-        res.status(403).send('Akses Ditolak: Khusus Admin');
-    });
+    if (req.session && req.session.user && req.session.user.role === 'admin') return next();
+    if (!req.session || !req.session.user) return res.redirect('/login');
+    res.status(403).send('Akses Ditolak: Khusus Admin');
 };
 
-// --- ROUTES AUTHENTICATION ---
+// --- ROUTES AUTH ---
 app.get('/', (req, res) => res.redirect('/login'));
 
 app.get('/login', (req, res) => {
@@ -111,8 +89,7 @@ app.get('/login', (req, res) => {
         if (req.session.user.role === 'admin') return res.redirect('/admin/sparepart');
         return res.redirect('/teknisi/dashboard');
     }
-    const errorMsg = req.query.error || null;
-    res.render('login', { error: errorMsg });
+    res.render('login', { error: req.query.error || null });
 });
 
 app.post('/login', async (req, res) => {
@@ -121,8 +98,7 @@ app.post('/login', async (req, res) => {
         const user = await User.findOne({ username });
         if (user && await bcrypt.compare(password, user.password)) {
             req.session.user = user;
-            req.session.save((err) => {
-                if (err) console.error("Gagal menyimpan session:", err);
+            req.session.save(() => {
                 if (user.role === 'admin') return res.redirect('/admin/sparepart');
                 return res.redirect('/teknisi/dashboard');
             });
@@ -141,22 +117,14 @@ app.get('/logout', (req, res) => {
     });
 });
 
-// --- ADMIN: HALAMAN SPAREPART & STOK ---
+// --- ADMIN: SPAREPART ---
 app.get('/admin/sparepart', isAdmin, async (req, res) => {
     try {
         const { search } = req.query;
         let query = {};
         if (search) {
             const regex = new RegExp(search, 'i');
-            query = {
-                $or: [
-                    { namaBarang: regex },
-                    { kodeBarang: regex },
-                    { lokasiBarang: regex },
-                    { typeBarang: regex },
-                    { fungsiBarang: regex }
-                ]
-            };
+            query = { $or: [{ namaBarang: regex }, { kodeBarang: regex }, { lokasiBarang: regex }, { typeBarang: regex }] };
         }
         const spareparts = await Sparepart.find(query);
         res.render('admin-sparepart', { user: req.session.user, spareparts, search: search || '', error: null });
@@ -175,56 +143,41 @@ app.post('/admin/sparepart/save', isAdmin, async (req, res) => {
         }
         res.redirect('/admin/sparepart');
     } catch (err) {
-        const spareparts = await Sparepart.find();
-        res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Gagal menyimpan sparepart: ' + err.message });
+        res.redirect('/admin/sparepart');
     }
 });
 
-// ROUTE HAPUS SPAREPART
 app.post('/admin/sparepart/delete/:id', isAdmin, async (req, res) => {
     try {
-        const { id } = req.params;
-        await Sparepart.findByIdAndDelete(id);
+        await Sparepart.findByIdAndDelete(req.params.id);
         res.redirect('/admin/sparepart');
     } catch (err) {
-        const spareparts = await Sparepart.find();
-        res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Gagal menghapus sparepart: ' + err.message });
+        res.redirect('/admin/sparepart');
     }
 });
 
-// ROUTE TAMBAH / KURANG QTY STOK SPAREPART
 app.post('/admin/sparepart/update-stok', isAdmin, async (req, res) => {
     try {
         const { sparepartId, jenis, jumlah } = req.body;
         const qty = parseInt(jumlah) || 0;
-
         const sp = await Sparepart.findById(sparepartId);
-        if (!sp) {
-            const spareparts = await Sparepart.find();
-            return res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Sparepart tidak ditemukan!' });
-        }
-
-        if (jenis === 'tambah') {
-            sp.stokBarang += qty;
-            sp.barangMasuk += qty;
-        } else if (jenis === 'kurang') {
-            if (sp.stokBarang < qty) {
-                const spareparts = await Sparepart.find();
-                return res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Stok tidak mencukupi untuk dikurangi!' });
+        if (sp) {
+            if (jenis === 'tambah') {
+                sp.stokBarang += qty;
+                sp.barangMasuk += qty;
+            } else if (jenis === 'kurang' && sp.stokBarang >= qty) {
+                sp.stokBarang -= qty;
+                sp.barangKeluar += qty;
             }
-            sp.stokBarang -= qty;
-            sp.barangKeluar += qty;
+            await sp.save();
         }
-
-        await sp.save();
         res.redirect('/admin/sparepart');
     } catch (err) {
-        const spareparts = await Sparepart.find();
-        res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Gagal mengupdate stok: ' + err.message });
+        res.redirect('/admin/sparepart');
     }
 });
 
-// ROUTE EXPORT EXCEL
+// EXPORT EXCEL SPAREPART
 app.get('/admin/sparepart/export', isAdmin, async (req, res) => {
     try {
         const spareparts = await Sparepart.find();
@@ -249,23 +202,20 @@ app.get('/admin/sparepart/export', isAdmin, async (req, res) => {
         await workbook.xlsx.write(res);
         res.end();
     } catch (err) {
-        const spareparts = await Sparepart.find();
-        res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: err.message });
+        res.status(500).send(err.message);
     }
 });
 
-// ROUTE IMPORT EXCEL
+// IMPORT EXCEL SPAREPART (Mendukung file besar 20MB+)
 app.post('/admin/sparepart/import', isAdmin, upload.single('fileExcel'), async (req, res) => {
     try {
-        if (!req.file) {
-            const spareparts = await Sparepart.find();
-            return res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Tidak ada file yang di-upload!' });
-        }
+        if (!req.file) return res.redirect('/admin/sparepart');
 
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.load(req.file.buffer);
         const worksheet = workbook.getWorksheet(1);
 
+        const bulkOperations = [];
         worksheet.eachRow((row, rowNumber) => {
             if (rowNumber === 1) return;
 
@@ -279,35 +229,30 @@ app.post('/admin/sparepart/import', isAdmin, upload.single('fileExcel'), async (
             const fungsiBarang = row.getCell(8).text ? row.getCell(8).text.trim() : '';
 
             if (kodeBarang && namaBarang) {
-                Sparepart.findOneAndUpdate(
-                    { kodeBarang: kodeBarang },
-                    { 
-                        namaBarang, 
-                        lokasiBarang, 
-                        typeBarang, 
-                        stokBarang, 
-                        barangMasuk, 
-                        barangKeluar, 
-                        fungsiBarang 
-                    },
-                    { upsert: true, new: true }
-                ).exec();
+                bulkOperations.push({
+                    updateOne: {
+                        filter: { kodeBarang },
+                        update: { $set: { namaBarang, lokasiBarang, typeBarang, stokBarang, barangMasuk, barangKeluar, fungsiBarang } },
+                        upsert: true
+                    }
+                });
             }
         });
 
+        if (bulkOperations.length > 0) {
+            await Sparepart.bulkWrite(bulkOperations);
+        }
+
         res.redirect('/admin/sparepart');
     } catch (err) {
-        const spareparts = await Sparepart.find();
-        res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Gagal mengimport data Excel: ' + err.message });
+        res.redirect('/admin/sparepart');
     }
 });
 
-// --- API ROUTE: RIWAYAT PERBAIKAN BERDASARKAN SPAREPART ---
 app.get('/admin/sparepart/repair-history/:id', isAdmin, async (req, res) => {
     try {
         const sparepartId = req.params.id;
-        const repairs = await Repair.find({ 'sparepartsUsed.sparepart': sparepartId })
-                                    .sort({ tanggal: -1 });
+        const repairs = await Repair.find({ 'sparepartsUsed.sparepart': sparepartId }).sort({ tanggal: -1 });
 
         const formattedData = repairs.map(r => {
             const usedItem = r.sparepartsUsed.find(item => item.sparepart && item.sparepart.toString() === sparepartId);
@@ -326,15 +271,13 @@ app.get('/admin/sparepart/repair-history/:id', isAdmin, async (req, res) => {
                 keterangan: r.keterangan
             };
         });
-
         res.json(formattedData);
     } catch (err) {
-        console.error("Error mengambil riwayat sparepart:", err);
-        res.status(500).json({ error: "Gagal mengambil data dari server" });
+        res.status(500).json({ error: "Gagal mengambil data" });
     }
 });
 
-// --- ADMIN: HALAMAN REPAIR & SORTIR ---
+// --- ADMIN: REPAIR LOGS & SORTIR ---
 app.get('/admin/repair', isAdmin, async (req, res) => {
     try {
         let { page, filterType, month, weekStart, weekEnd, tanggalFilter, year, namaMesin } = req.query;
@@ -343,34 +286,24 @@ app.get('/admin/repair', isAdmin, async (req, res) => {
         const skip = (page - 1) * limit;
 
         let query = {};
-
-        if (namaMesin) {
-            query.namaMesin = new RegExp(namaMesin, 'i');
-        }
+        if (namaMesin) query.namaMesin = new RegExp(namaMesin, 'i');
 
         if (filterType === 'date' && tanggalFilter) {
-            const startDay = new Date(tanggalFilter);
-            const endDay = new Date(tanggalFilter + 'T23:59:59');
-            query.tanggal = { $gte: startDay, $lte: endDay };
+            query.tanggal = { $gte: new Date(tanggalFilter), $lte: new Date(tanggalFilter + 'T23:59:59') };
         } else if (filterType === 'month' && month) {
             const targetMonth = new Date(month);
-            const startMonth = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), 1);
-            const endMonth = new Date(targetMonth.getFullYear(), targetMonth.getMonth() + 1, 0, 23, 59, 59);
-            query.tanggal = { $gte: startMonth, $lte: endMonth };
+            query.tanggal = { 
+                $gte: new Date(targetMonth.getFullYear(), targetMonth.getMonth(), 1), 
+                $lte: new Date(targetMonth.getFullYear(), targetMonth.getMonth() + 1, 0, 23, 59, 59) 
+            };
         } else if (filterType === 'year' && year) {
-            const startYear = new Date(`${year}-01-01T00:00:00`);
-            const endYear = new Date(`${year}-12-31T23:59:59`);
-            query.tanggal = { $gte: startYear, $lte: endYear };
+            query.tanggal = { $gte: new Date(`${year}-01-01T00:00:00`), $lte: new Date(`${year}-12-31T23:59:59`) };
         } else if (filterType === 'week' && weekStart && weekEnd) {
             query.tanggal = { $gte: new Date(weekStart), $lte: new Date(weekEnd + 'T23:59:59') };
         }
 
         const totalRepairs = await Repair.countDocuments(query);
-        const repairs = await Repair.find(query)
-            .populate('sparepartsUsed.sparepart')
-            .sort({ tanggal: -1 })
-            .skip(skip)
-            .limit(limit);
+        const repairs = await Repair.find(query).populate('sparepartsUsed.sparepart').sort({ tanggal: -1 }).skip(skip).limit(limit);
 
         res.render('admin-repair', {
             user: req.session.user,
@@ -390,45 +323,12 @@ app.get('/admin/repair', isAdmin, async (req, res) => {
     }
 });
 
-// --- ADMIN: MANAJEMEN AKUN ---
-app.get('/admin/users', isAdmin, async (req, res) => {
+app.post('/admin/repair/status/:id', isAdmin, async (req, res) => {
     try {
-        const users = await User.find();
-        res.render('admin-users', { 
-            user: req.session.user, 
-            users, 
-            error: req.query.error || null 
-        });
+        await Repair.findByIdAndUpdate(req.params.id, { status: req.body.status });
+        res.redirect('/admin/repair');
     } catch (err) {
-        res.status(500).render('admin-users', { 
-            user: req.session.user, 
-            users: [], 
-            error: 'Gagal memuat daftar akun: ' + err.message 
-        });
-    }
-});
-
-app.post('/admin/user/add', isAdmin, async (req, res) => {
-    try {
-        const { username, password, role } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await User.create({ username, password: hashedPassword, role });
-        res.redirect('/admin/users');
-    } catch (err) {
-        res.redirect('/admin/users?error=' + encodeURIComponent('Gagal membuat user: ' + err.message));
-    }
-});
-
-app.post('/admin/user/delete/:id', isAdmin, async (req, res) => {
-    try {
-        const { id } = req.params;
-        if (req.session.user._id === id || req.session.user.id === id) {
-            return res.redirect('/admin/users?error=' + encodeURIComponent('Tidak dapat menghapus akun yang sedang digunakan saat ini!'));
-        }
-        await User.findByIdAndDelete(id);
-        res.redirect('/admin/users');
-    } catch (err) {
-        res.redirect('/admin/users?error=' + encodeURIComponent('Gagal menghapus akun: ' + err.message));
+        res.redirect('/admin/repair');
     }
 });
 
@@ -436,9 +336,7 @@ app.get('/admin/repair/export', isAdmin, async (req, res) => {
     try {
         const { startDate, endDate, namaMesin } = req.query;
         let query = {};
-        if (startDate && endDate) {
-            query.tanggal = { $gte: new Date(startDate), $lte: new Date(endDate + 'T23:59:59') };
-        }
+        if (startDate && endDate) query.tanggal = { $gte: new Date(startDate), $lte: new Date(endDate + 'T23:59:59') };
         if (namaMesin) query.namaMesin = new RegExp(namaMesin, 'i');
 
         const repairs = await Repair.find(query).populate('sparepartsUsed.sparepart');
@@ -489,7 +387,37 @@ app.get('/admin/repair/export', isAdmin, async (req, res) => {
     }
 });
 
-// --- TEKNISI DASHBOARD ---
+// --- ADMIN: USERS ---
+app.get('/admin/users', isAdmin, async (req, res) => {
+    try {
+        const users = await User.find();
+        res.render('admin-users', { user: req.session.user, users, error: req.query.error || null });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+app.post('/admin/user/add', isAdmin, async (req, res) => {
+    try {
+        const { username, password, role } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await User.create({ username, password: hashedPassword, role });
+        res.redirect('/admin/users');
+    } catch (err) {
+        res.redirect('/admin/users?error=Gagal membuat user');
+    }
+});
+
+app.post('/admin/user/delete/:id', isAdmin, async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        res.redirect('/admin/users');
+    } catch (err) {
+        res.redirect('/admin/users');
+    }
+});
+
+// --- TEKNISI DASHBOARD & REPAIR ---
 app.get('/teknisi/dashboard', isAuthenticated, async (req, res) => {
     try {
         let { page } = req.query;
@@ -513,37 +441,11 @@ app.get('/teknisi/dashboard', isAuthenticated, async (req, res) => {
     }
 });
 
-// --- TEKNISI: HALAMAN CARI SPAREPART ---
-app.get('/teknisi/sparepart', isAuthenticated, async (req, res) => {
-    try {
-        const { search } = req.query;
-        let query = {};
-        if (search) {
-            const regex = new RegExp(search, 'i');
-            query = {
-                $or: [
-                    { namaBarang: regex },
-                    { kodeBarang: regex },
-                    { lokasiBarang: regex },
-                    { typeBarang: regex },
-                    { fungsiBarang: regex }
-                ]
-            };
-        }
-        const spareparts = await Sparepart.find(query);
-        res.render('teknisi-sparepart', { user: req.session.user, spareparts, search: search || '' });
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-});
-
-// Input Perbaikan & Pengurangan Otomatis Stok
 app.post('/repair/add', isAuthenticated, async (req, res) => {
     try {
         const { tanggal, shift, namaMesin, problem, analisaPenyebab, caraPerbaikan, sparepartIds, jumlahPakais, pic, jamMulai, jamSelesai, status, keterangan } = req.body;
         
         let sparepartsUsed = [];
-
         if (sparepartIds) {
             const ids = Array.isArray(sparepartIds) ? sparepartIds : [sparepartIds];
             const qtys = Array.isArray(jumlahPakais) ? jumlahPakais : [jumlahPakais];
@@ -552,18 +454,13 @@ app.post('/repair/add', isAuthenticated, async (req, res) => {
                 if (ids[i] && qtys[i] > 0) {
                     const spId = ids[i];
                     const qty = Number(qtys[i]);
-
                     const sp = await Sparepart.findById(spId);
                     if (sp) {
                         sp.stokBarang -= qty;
                         sp.barangKeluar += qty;
                         await sp.save();
                     }
-
-                    sparepartsUsed.push({
-                        sparepart: spId,
-                        jumlahPakai: qty
-                    });
+                    sparepartsUsed.push({ sparepart: spId, jumlahPakai: qty });
                 }
             }
         }
@@ -576,7 +473,7 @@ app.post('/repair/add', isAuthenticated, async (req, res) => {
         const redirectUrl = req.session.user.role === 'admin' ? '/admin/repair' : '/teknisi/dashboard';
         res.redirect(redirectUrl);
     } catch (err) {
-        res.status(500).send('Gagal menyimpan perbaikan: ' + err.message);
+        res.status(500).send('Gagal menyimpan: ' + err.message);
     }
 });
 
