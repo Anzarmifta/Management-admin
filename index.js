@@ -285,6 +285,40 @@ app.post('/admin/sparepart/import', isAdmin, upload.single('fileExcel'), async (
         res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Gagal mengimport data Excel: ' + err.message });
     }
 });
+// --- API ROUTE: RIWAYAT PERBAIKAN BERDASARKAN SPAREPART ---
+app.get('/admin/sparepart/repair-history/:id', isAdmin, async (req, res) => {
+    try {
+        const sparepartId = req.params.id;
+        
+        // Cari data repair yang menggunakan sparepart ID tersebut dan populate datanya
+        const repairs = await Repair.find({ 'sparepartsUsed.sparepart': sparepartId })
+                                    .sort({ tanggal: -1 });
+
+        // Format data agar sesuai dengan yang dibaca oleh tabel di frontend modal
+        const formattedData = repairs.map(r => {
+            const usedItem = r.sparepartsUsed.find(item => item.sparepart && item.sparepart.toString() === sparepartId);
+            return {
+                tanggal: r.tanggal,
+                shift: r.shift,
+                namaMesin: r.namaMesin,
+                problem: r.problem,
+                analisaPenyebab: r.analisaPenyebab,
+                caraPerbaikan: r.caraPerbaikan,
+                jumlahPakai: usedItem ? usedItem.jumlahPakai : 1,
+                pic: r.pic,
+                jamMulai: r.jamMulai,
+                jamSelesai: r.jamSelesai,
+                status: r.status,
+                keterangan: r.keterangan
+            };
+        });
+
+        res.json(formattedData);
+    } catch (err) {
+        console.error("Error mengambil riwayat sparepart:", err);
+        res.status(500).json({ error: "Gagal mengambil data dari server" });
+    }
+});
 
 // --- ADMIN: HALAMAN REPAIR & SORTIR ---
 app.get('/admin/repair', isAdmin, async (req, res) => {
