@@ -235,7 +235,7 @@
                             <td class="fw-semibold text-secondary"><%= s.kodeBarang %></td>
                             <td class="fw-bold text-dark"><%= s.namaBarang %></td>
                             <td><%= s.lokasiBarang || '-' %></td>
-                            <td><%= s.typeBarang || '-' %></td>
+                            <td><span class="badge bg-light text-dark border"><%= s.typeBarang || '-' %></span></td>
                             <td>
                                 <span class="badge bg-<%= s.stokBarang > 0 ? 'success' : 'danger' %> px-2 py-1 rounded-pill fw-medium">
                                     <%= s.stokBarang %>
