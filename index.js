@@ -16,6 +16,10 @@ const Sparepart = require('./models/Sparepart');
 const Repair = require('./models/Repair');
 
 const app = express();
+
+// WAJIB UNTUK VERCEL: Agar cookie aman & session terbaca di balik reverse proxy
+app.set('trust proxy', 1);
+
 const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(express.urlencoded({ extended: true }));
@@ -43,7 +47,7 @@ async function connectDB() {
     }
 }
 
-// Konfigurasi Session menggunakan MongoDB agar tidak hilang saat server restart
+// Konfigurasi Session menggunakan MongoDB agar tidak hilang saat server restart / cold start
 app.use(session({
     secret: process.env.SESSION_SECRET || 'rahasia_super_aman_123',
     resave: false,
@@ -55,8 +59,9 @@ app.use(session({
     }),
     cookie: { 
         maxAge: 12 * 60 * 60 * 1000, // 12 jam dalam milidetik
-        secure: process.env.NODE_ENV === 'production', // Otomatis true jika di production (HTTPS), false jika lokal
-        httpOnly: true
+        secure: process.env.NODE_ENV === 'production', // true saat di production (HTTPS), false jika lokal
+        httpOnly: true,
+        sameSite: 'lax' // Mencegah cookie diblokir oleh browser di environment serverless/proxy
     }
 }));
 
@@ -115,7 +120,6 @@ const isAdmin = (req, res, next) => {
 app.get('/', (req, res) => res.redirect('/login'));
 
 app.get('/login', (req, res) => {
-    // Jika sudah login, langsung lempar ke dashboard masing-masing
     if (req.session && req.session.user) {
         if (req.session.user.role === 'admin') return res.redirect('/admin/sparepart');
         return res.redirect('/teknisi/dashboard');
@@ -130,7 +134,7 @@ app.post('/login', async (req, res) => {
         const user = await User.findOne({ username });
         if (user && await bcrypt.compare(password, user.password)) {
             req.session.user = user;
-            // Simpan session secara eksplisit sebelum redirect untuk serverless
+            // Memastikan data session tersimpan tuntas di MongoDB sebelum redirect
             req.session.save((err) => {
                 if (err) console.error("Gagal menyimpan session:", err);
                 if (user.role === 'admin') return res.redirect('/admin/sparepart');
