@@ -440,6 +440,39 @@ app.get('/teknisi/dashboard', isAuthenticated, async (req, res) => {
         res.status(500).send(err.message);
     }
 });
+// --- TEKNISI: SPAREPART (Pencarian Sparepart) ---
+app.get('/teknisi/sparepart', isAuthenticated, async (req, res) => {
+    try {
+        const { search } = req.query;
+        let query = {};
+        if (search) {
+            const regex = new RegExp(search, 'i');
+            query = { 
+                $or: [
+                    { namaBarang: regex }, 
+                    { kodeBarang: regex }, 
+                    { lokasiBarang: regex }, 
+                    { typeBarang: regex },
+                    { fungsiBarang: regex }
+                ] 
+            };
+        }
+        const spareparts = await Sparepart.find(query);
+        res.render('teknisi-sparepart', { 
+            user: req.session.user, 
+            spareparts, 
+            search: search || '', 
+            error: null 
+        });
+    } catch (err) {
+        res.status(500).render('teknisi-sparepart', { 
+            user: req.session.user, 
+            spareparts: [], 
+            search: '', 
+            error: err.message 
+        });
+    }
+});
 
 app.post('/repair/add', isAuthenticated, async (req, res) => {
     try {
