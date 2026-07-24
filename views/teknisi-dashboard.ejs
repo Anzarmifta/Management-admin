@@ -15,15 +15,12 @@
             --text-muted: #64748b;
             --radius-ios: 16px;
         }
-
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
             -webkit-font-smoothing: antialiased;
         }
-
-        /* Navbar Clean Glassmorphism */
         .navbar {
             background: rgba(255, 255, 255, 0.85) !important;
             backdrop-filter: blur(12px);
@@ -35,16 +32,12 @@
             letter-spacing: -0.5px;
             color: #0f172a !important;
         }
-
-        /* Card Container */
         .ios-card {
             background: var(--card-bg);
             border: 1px solid #e2e8f0;
             border-radius: var(--radius-ios);
             box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02);
         }
-
-        /* Form Controls & Inputs */
         .form-control, .form-select {
             border-radius: 10px;
             padding: 10px 14px;
@@ -57,8 +50,6 @@
             border-color: #0f172a;
             box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05);
         }
-
-        /* Buttons Style */
         .btn {
             border-radius: 10px;
             padding: 9px 14px;
@@ -91,20 +82,14 @@
             background-color: #1ebd5a;
             color: #fff;
         }
-
-        /* Offcanvas Sidebar Kiri ala iOS */
         .offcanvas {
             border-top-right-radius: 24px;
             border-bottom-right-radius: 24px;
             border: none;
             box-shadow: 10px 0 40px rgba(15, 23, 42, 0.1);
         }
-        .offcanvas-header {
-            padding: 24px 24px 10px 24px;
-        }
-        .offcanvas-body {
-            padding: 20px 24px;
-        }
+        .offcanvas-header { padding: 24px 24px 10px 24px; }
+        .offcanvas-body { padding: 20px 24px; }
         .sidebar-item {
             display: flex;
             align-items: center;
@@ -120,8 +105,6 @@
             background-color: #f1f5f9;
             color: var(--text-main);
         }
-
-        /* Tabel Minimalis */
         .table {
             color: var(--text-main);
             white-space: nowrap;
@@ -143,25 +126,16 @@
             border-bottom: 1px solid #f1f5f9;
             vertical-align: middle;
         }
-
-        /* Modal Styling */
         .modal-content {
             border: none;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
         }
-        .modal-header, .modal-footer {
-            border-color: #f1f5f9;
-            padding: 18px 20px;
-        }
-        .modal-body {
-            padding: 20px;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Navbar dengan Tombol Menu Sidebar (Kiri) -->
+    <!-- Navbar -->
     <nav class="navbar navbar-expand px-4 sticky-top">
         <div class="d-flex align-items-center gap-3">
             <button class="btn btn-light-subtle d-flex align-items-center justify-content-center p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#leftSidebar" aria-controls="leftSidebar" style="width: 38px; height: 38px;">
@@ -176,7 +150,7 @@
         </div>
     </nav>
 
-    <!-- Offcanvas Sidebar Muncul dari Kiri -->
+    <!-- Offcanvas Sidebar -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="leftSidebar" aria-labelledby="leftSidebarLabel" style="width: 280px;">
         <div class="offcanvas-header border-0 pb-0">
             <h5 class="offcanvas-title fw-bold" id="leftSidebarLabel">MTC.SYS</h5>
@@ -186,30 +160,12 @@
             <div>
                 <p class="text-muted small mb-3 px-2">Menu Navigasi</p>
                 <div class="list-unstyled">
-                    <a href="/teknisi/dashboard" class="sidebar-item active">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-plus me-3" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
-                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
-                            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
-                        </svg>
-                        Input Perbaikan
-                    </a>
-                    <a href="/teknisi/sparepart" class="sidebar-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search me-3" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.098zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                        </svg>
-                        Cari Sparepart
-                    </a>
+                    <a href="/teknisi/dashboard" class="sidebar-item active">Input Perbaikan</a>
+                    <a href="/teknisi/sparepart" class="sidebar-item">Cari Sparepart</a>
                 </div>
             </div>
             <div class="pt-3 border-top">
-                <a href="/logout" class="sidebar-item text-danger">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left me-3" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
-                        <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
-                    </svg>
-                    Logout
-                </a>
+                <a href="/logout" class="sidebar-item text-danger">Logout</a>
             </div>
         </div>
     </div>
@@ -248,21 +204,21 @@
                     <textarea name="caraPerbaikan" id="inputPerbaikan" class="form-control" rows="2" placeholder="Tindakan perbaikan..."></textarea>
                 </div>
                 
-                <!-- Multi Sparepart Input dengan Fitur Pencarian -->
+                <!-- Multi Sparepart Input -->
                 <div class="col-md-6">
                     <label class="form-label text-muted small fw-semibold">Sparepart yang Digunakan</label>
                     <div id="sparepartContainer">
                         <div class="border p-3 mb-2 rounded bg-light sparepart-row shadow-sm border-0">
                             <div class="mb-2">
-                                <input type="text" class="form-control form-control-sm search-sparepart" placeholder="Cari sparepart (nama, kode, type, lokasi, fungsi)..." onkeyup="filterSparepartOptions(this)">
+                                <input type="text" class="form-control form-control-sm search-sparepart" placeholder="Cari sparepart..." onkeyup="filterSparepartOptions(this)">
                             </div>
                             <div class="row g-2">
                                 <div class="col-md-8">
                                     <select name="sparepartIds" class="form-select form-select-sm sparepart-select" required>
                                         <option value="">-- Pilih Sparepart --</option>
                                         <% spareparts.forEach(s => { %>
-                                            <option value="<%= s._id %>" data-keywords="<%= (s.namaBarang + ' ' + s.kodeBarang + ' ' + (s.typeBarang || '') + ' ' + (s.lokasiBarang || '') + ' ' + (s.fungsiBarang || '')).toLowerCase() %>">
-                                                <%= s.namaBarang %> (Kode: <%= s.kodeBarang %> | Type: <%= s.typeBarang || '-' %> | Stok: <%= s.stokBarang %>)
+                                            <option value="<%= s._id %>" data-keywords="<%= (s.namaBarang + ' ' + s.kodeBarang).toLowerCase() %>">
+                                                <%= s.namaBarang %> (Kode: <%= s.kodeBarang %> | Stok: <%= s.stokBarang %>)
                                             </option>
                                         <% }) %>
                                     </select>
@@ -304,9 +260,9 @@
                     <input type="text" name="keterangan" class="form-control" placeholder="Catatan tambahan (opsional)">
                 </div>
 
-                <!-- Attachment Foto / Gambar dengan Dropdown Preview & Download -->
+                <!-- Attachment Foto (Opsional) -->
                 <div class="col-md-6">
-                    <label class="form-label text-muted small fw-semibold">Lampiran Foto Kerusakan / Hasil Kerja</label>
+                    <label class="form-label text-muted small fw-semibold">Lampiran Foto (Opsional)</label>
                     <input type="file" name="lampiranFoto" id="lampiranFoto" class="form-control" accept="image/*" onchange="handleImagePreview(event)">
                 </div>
                 <div class="col-md-6 d-flex align-items-end">
@@ -328,21 +284,17 @@
                     <button type="submit" class="btn btn-dark w-100 py-2">Simpan Laporan & Ambil Sparepart</button>
                 </div>
                 
-                <!-- Tombol Kirim Laporan via WhatsApp (Bisa Pilih Kontak di WhatsApp) -->
                 <div class="col-md-6 pt-2">
                     <button type="button" class="btn btn-success-wa w-100 py-2 d-flex align-items-center justify-content-center gap-2" onclick="sendWhatsAppReport()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16">
-                            <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.348.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.342-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.078.38-.058 1.17-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
-                        </svg>
                         Kirim Laporan via WhatsApp
                     </button>
                 </div>
             </form>
         </div>
 
-        <!-- Riwayat Semua Perbaikan -->
+        <!-- Riwayat Perbaikan -->
         <div class="ios-card p-4">
-            <h5 class="fw-bold mb-3" style="letter-spacing: -0.5px;">Riwayat Semua Perbaikan</h5>
+            <h5 class="fw-bold mb-3">Riwayat Semua Perbaikan</h5>
             <div class="table-responsive">
                 <table class="table align-middle">
                     <thead>
@@ -352,36 +304,24 @@
                             <th>Mesin</th>
                             <th>Problem</th>
                             <th>Perbaikan</th>
-                            <th>Sparepart Dipakai</th>
                             <th>PIC</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% if(repairs.length === 0) { %>
-                            <tr><td colspan="8" class="text-center py-4 text-muted">Belum ada riwayat perbaikan.</td></tr>
+                            <tr><td colspan="7" class="text-center py-4 text-muted">Belum ada riwayat perbaikan.</td></tr>
                         <% } %>
                         <% repairs.forEach(r => { %>
                         <tr>
-                            <td class="fw-semibold text-secondary"><%= r.tanggal ? r.tanggal.toISOString().split('T')[0] : '' %></td>
+                            <td><%= r.tanggal ? r.tanggal.toISOString().split('T')[0] : '' %></td>
                             <td><%= r.shift %></td>
-                            <td class="fw-bold text-dark"><%= r.namaMesin %></td>
+                            <td class="fw-bold"><%= r.namaMesin %></td>
                             <td><%= r.problem %></td>
                             <td><%= r.caraPerbaikan %></td>
-                            <td>
-                                <% if(r.sparepartsUsed && r.sparepartsUsed.length > 0) { %>
-                                    <ul class="ps-3 mb-0">
-                                        <% r.sparepartsUsed.forEach(item => { %>
-                                            <li><%= item.sparepart ? item.sparepart.namaBarang : 'Dihapus' %> (<%= item.jumlahPakai %>x)</li>
-                                        <% }) %>
-                                    </ul>
-                                <% } else { %>
-                                    -
-                                <% } %>
-                            </td>
                             <td><%= r.pic %></td>
                             <td>
-                                <span class="badge bg-<%= r.status=='ok'?'success':(r.status=='progress'?'warning':'danger') %> px-2 py-1 rounded-pill fw-medium">
+                                <span class="badge bg-<%= r.status=='ok'?'success':(r.status=='progress'?'warning':'danger') %> px-2 py-1 rounded-pill">
                                     <%= r.status.toUpperCase() %>
                                 </span>
                             </td>
@@ -390,35 +330,15 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
-            <nav class="mt-4">
-                <ul class="pagination justify-content-center mb-0">
-                    <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
-                        <a class="page-link border-0 text-dark fw-semibold bg-light rounded-start-pill px-3" href="/teknisi/dashboard?page=<%= currentPage - 1 %>">Previous</a>
-                    </li>
-                    <li class="page-item disabled">
-                        <span class="page-link border-0 bg-transparent text-muted">Halaman <%= currentPage %> dari <%= totalPages %></span>
-                    </li>
-                    <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
-                        <a class="page-link border-0 text-dark fw-semibold bg-light rounded-end-pill px-3" href="/teknisi/dashboard?page=<%= currentPage + 1 %>">Next</a>
-                    </li>
-                </ul>
-            </nav>
         </div>
     </div>
 
-    <!-- Pop-up Modal untuk Error / Pesan Gagal -->
+    <!-- Modal Error -->
     <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 340px;">
             <div class="modal-content border-0 p-3 text-center">
                 <div class="modal-body">
-                    <div class="mb-3 text-danger">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
-                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                        </svg>
-                    </div>
-                    <h5 class="fw-bold mb-2">Pemberitahuan</h5>
+                    <h5 class="fw-bold mb-2 text-danger">Pemberitahuan</h5>
                     <p class="text-muted small mb-4"><%= typeof error !== 'undefined' ? error : '' %></p>
                     <button type="button" class="btn btn-dark w-100 py-2" data-bs-dismiss="modal">OK</button>
                 </div>
@@ -432,14 +352,9 @@
         const row = inputElement.closest('.sparepart-row');
         const select = row.querySelector('.sparepart-select');
         const options = select.getElementsByTagName('option');
-
         for (let i = 1; i < options.length; i++) {
             const keywords = options[i].getAttribute('data-keywords');
-            if (keywords.includes(keyword)) {
-                options[i].style.display = "";
-            } else {
-                options[i].style.display = "none";
-            }
+            options[i].style.display = keywords.includes(keyword) ? "" : "none";
         }
     }
 
@@ -448,79 +363,48 @@
         const firstRow = container.querySelector('.sparepart-row');
         const newRow = firstRow.cloneNode(true);
         newRow.querySelector('.search-sparepart').value = "";
-        const select = newRow.querySelector('.sparepart-select');
-        select.value = "";
-        
-        const options = select.getElementsByTagName('option');
-        for (let i = 0; i < options.length; i++) {
-            options[i].style.display = "";
-        }
-
+        newRow.querySelector('.sparepart-select').value = "";
         newRow.querySelector('input[name="jumlahPakais"]').value = "1";
         container.appendChild(newRow);
     }
 
-    // Fungsi Preview dan Dropdown Unduh Gambar yang di-upload
     function handleImagePreview(event) {
         const file = event.target.files[0];
         const container = document.getElementById('downloadDropdownContainer');
-        const fileNameLabel = document.getElementById('fileNameLabel');
-        const previewLink = document.getElementById('previewImageLink');
-        const downloadLink = document.getElementById('downloadImageLink');
-
         if (file) {
             const fileURL = URL.createObjectURL(file);
-            fileNameLabel.textContent = file.name;
-            previewLink.href = fileURL;
-            downloadLink.href = fileURL;
-            downloadLink.download = file.name;
+            document.getElementById('fileNameLabel').textContent = file.name;
+            document.getElementById('previewImageLink').href = fileURL;
+            document.getElementById('downloadImageLink').href = fileURL;
             container.style.display = "block";
         } else {
             container.style.display = "none";
         }
     }
 
-    // Fungsi Kirim Pesan ke WhatsApp (Tanpa nomor tujuan agar Anda bisa bebas memilih kontak di WhatsApp)
     function sendWhatsAppReport() {
         const tanggal = document.getElementById('inputTanggal').value;
         const shift = document.getElementById('inputShift').value;
         const namaMesin = document.getElementById('inputNamaMesin').value;
         const problem = document.getElementById('inputProblem').value;
-        const analisa = document.getElementById('inputAnalisa').value;
-        const perbaikan = document.getElementById('inputPerbaikan').value;
         const pic = document.getElementById('inputPic').value;
         const jamMulai = document.getElementById('inputJamMulai').value;
         const jamSelesai = document.getElementById('inputJamSelesai').value;
-        const status = document.getElementById('inputStatus').value.toUpperCase();
 
         if (!namaMesin || !problem || !pic || !tanggal || !jamMulai || !jamSelesai) {
-            alert('Mohon lengkapi Tanggal, Nama Mesin, Problem, PIC, Jam Mulai, dan Jam Selesai sebelum mengirim laporan!');
+            alert('Mohon lengkapi field wajib sebelum mengirim laporan!');
             return;
         }
 
-        let message = `*LAPORAN PERBAIKAN MESIN (MTC.SYS)*\n\n` +
-                      `📅 *Tanggal:* ${tanggal}\n` +
-                      `⏰ *Shift:* ${shift}\n` +
-                      `⚙️ *Nama Mesin:* ${namaMesin}\n` +
-                      `⚠️ *Problem:* ${problem}\n` +
-                      `🔍 *Analisa:* ${analisa || '-'}\n` +
-                      `🛠️ *Perbaikan:* ${perbaikan || '-'}\n` +
-                      `⏱️ *Jam:* ${jamMulai} - ${jamSelesai}\n` +
-                      `👨‍🔧 *PIC:* ${pic}\n` +
-                      `📌 *Status:* ${status}`;
-
-        const encodedMessage = encodeURIComponent(message);
-        const waURL = `https://api.whatsapp.com/send?text=${encodedMessage}`;
-        
-        window.open(waURL, '_blank');
+        let message = `*LAPORAN PERBAIKAN MESIN*\n\nTanggal: ${tanggal}\nMesin: ${namaMesin}\nProblem: ${problem}\nJam: ${jamMulai} - ${jamSelesai}\nPIC: ${pic}`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
     }
 
-    // Trigger Pop-up Modal jika ada Error
     <% if(typeof error !== 'undefined' && error) { %>
     document.addEventListener("DOMContentLoaded", function() {
         new bootstrap.Modal(document.getElementById('errorModal')).show();
     });
-    <% } %>
+    <% %>
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
