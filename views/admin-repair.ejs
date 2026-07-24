@@ -24,7 +24,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Navbar Clean Glassmorphism */
         .navbar {
             background: rgba(255, 255, 255, 0.85) !important;
             backdrop-filter: blur(12px);
@@ -37,7 +36,6 @@
             color: #0f172a !important;
         }
 
-        /* Card Container */
         .ios-card {
             background: var(--card-bg);
             border: 1px solid #e2e8f0;
@@ -45,7 +43,6 @@
             box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02);
         }
 
-        /* Form Controls & Inputs */
         .form-control, .form-select {
             border-radius: 10px;
             padding: 10px 14px;
@@ -59,7 +56,6 @@
             box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05);
         }
 
-        /* Buttons Style */
         .btn {
             border-radius: 10px;
             padding: 9px 14px;
@@ -84,19 +80,14 @@
             color: #0f172a;
         }
 
-        /* Offcanvas Sidebar Kiri ala iOS */
         .offcanvas {
             border-top-right-radius: 24px;
             border-bottom-right-radius: 24px;
             border: none;
             box-shadow: 10px 0 40px rgba(15, 23, 42, 0.1);
         }
-        .offcanvas-header {
-            padding: 24px 24px 10px 24px;
-        }
-        .offcanvas-body {
-            padding: 20px 24px;
-        }
+        .offcanvas-header { padding: 24px 24px 10px 24px; }
+        .offcanvas-body { padding: 20px 24px; }
         .sidebar-item {
             display: flex;
             align-items: center;
@@ -113,7 +104,6 @@
             color: var(--text-main);
         }
 
-        /* Tabel Minimalis */
         .table {
             color: var(--text-main);
             white-space: nowrap;
@@ -136,7 +126,6 @@
             vertical-align: middle;
         }
 
-        /* Modal Styling */
         .modal-content {
             border: none;
             border-radius: 20px;
@@ -146,9 +135,7 @@
             border-color: #f1f5f9;
             padding: 18px 20px;
         }
-        .modal-body {
-            padding: 20px;
-        }
+        .modal-body { padding: 20px; }
     </style>
 </head>
 <body>
@@ -176,34 +163,13 @@
             <div>
                 <p class="text-muted small mb-3 px-2">Menu Navigasi</p>
                 <div class="list-unstyled">
-                    <a href="/admin/sparepart" class="sidebar-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam me-3" viewBox="0 0 16 16">
-                            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
-                        </svg>
-                        Sparepart Inventory
-                    </a>
-                    <a href="/admin/repair" class="sidebar-item active">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tools me-3" viewBox="0 0 16 16">
-                            <path d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.618 2.64A3 3 0 1 0 4 15.357l2.64-2.618 2.675 2.675a1 1 0 0 1 .293.707v.071a1 1 0 0 0 .419.815L15 16l1-1-3.5-3.5L12 10l-4-4 .5-1.5L9 3 1 0z"/>
-                        </svg>
-                        Repair Logs
-                    </a>
-                    <a href="/admin/users" class="sidebar-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people me-3" viewBox="0 0 16 16">
-                            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-9.975-.944c.5-.349 1.8-.956 3.975-.956.5 0 1.25.12 1.95.42-.515.337-1.07.75-1.55 1.25-.4.415-.84 1.01-1.15 1.77h-3.225v-.494c0-.365.174-.702.475-.99zM8 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6 5.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/>
-                        </svg>
-                        Manajemen Akun
-                    </a>
+                    <a href="/admin/sparepart" class="sidebar-item">Sparepart Inventory</a>
+                    <a href="/admin/repair" class="sidebar-item active">Repair Logs</a>
+                    <a href="/admin/users" class="sidebar-item">Manajemen Akun</a>
                 </div>
             </div>
             <div class="pt-3 border-top">
-                <a href="/logout" class="sidebar-item text-danger">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left me-3" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
-                        <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
-                    </svg>
-                    Logout
-                </a>
+                <a href="/logout" class="sidebar-item text-danger">Logout</a>
             </div>
         </div>
     </div>
@@ -229,13 +195,29 @@
             </div>
         </div>
 
-        <div class="ios-card p-4 mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold mb-0" style="letter-spacing: -0.5px;">Analisis Perbaikan Mesin (Bulan Ini)</h5>
-                <span class="text-muted small">Frekuensi & Durasi Waktu Perbaikan</span>
+        <!-- Bagian Diagram: Diagram Lingkaran Top 3 & Bar Chart Durasi -->
+        <div class="row g-4 mb-4">
+            <div class="col-12 col-md-6">
+                <div class="ios-card p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0" style="letter-spacing: -0.5px;">Top 3 Mesin Terbanyak Repair</h5>
+                        <span class="text-muted small">Diagram Lingkaran</span>
+                    </div>
+                    <div style="position: relative; height: 260px; width: 100%; display: flex; justify-content: center; align-items: center;">
+                        <canvas id="topMachinesPieChart"></canvas>
+                    </div>
+                </div>
             </div>
-            <div style="position: relative; height: 260px; width: 100%;">
-                <canvas id="repairAnalyticsChart"></canvas>
+            <div class="col-12 col-md-6">
+                <div class="ios-card p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0" style="letter-spacing: -0.5px;">Durasi Waktu Perbaikan</h5>
+                        <span class="text-muted small">Total Menit per Mesin</span>
+                    </div>
+                    <div style="position: relative; height: 260px; width: 100%;">
+                        <canvas id="repairAnalyticsChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -310,11 +292,12 @@
                             <th>Jam</th>
                             <th>Status</th>
                             <th>Ket</th>
+                            <th>Aksi Admin</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% if(repairs.length === 0) { %>
-                            <tr><td colspan="11" class="text-center py-4 text-muted">Belum ada data perbaikan ditemukan.</td></tr>
+                            <tr><td colspan="12" class="text-center py-4 text-muted">Belum ada data perbaikan ditemukan.</td></tr>
                         <% } %>
                         <% repairs.forEach(r => { %>
                         <tr>
@@ -343,6 +326,11 @@
                                 </span>
                             </td>
                             <td><%= r.keterangan || '-' %></td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-light-subtle text-dark fw-semibold" onclick="openStatusModal('<%= r._id %>', '<%= r.status %>')">
+                                    Ubah Status
+                                </button>
+                            </td>
                         </tr>
                         <% }) %>
                     </tbody>
@@ -365,19 +353,27 @@
         </div>
     </div>
 
-    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 340px;">
-            <div class="modal-content border-0 p-3 text-center">
-                <div class="modal-body">
-                    <div class="mb-3 text-danger">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
-                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                        </svg>
+    <!-- Modal Ubah Status -->
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 380px;">
+            <div class="modal-content border-0 p-3">
+                <form id="updateStatusForm" method="POST">
+                    <div class="modal-body">
+                        <h5 class="fw-bold mb-3">Ubah Status Perbaikan</h5>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-semibold">Pilih Status Baru:</label>
+                            <select name="status" id="modalStatusSelect" class="form-select" required>
+                                <option value="open">Open</option>
+                                <option value="progress">Progress</option>
+                                <option value="ok">OK</option>
+                            </select>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-dark w-100 py-2">Simpan Perubahan</button>
+                            <button type="button" class="btn btn-light-subtle w-100 py-2" data-bs-dismiss="modal">Batal</button>
+                        </div>
                     </div>
-                    <h5 class="fw-bold mb-2">Pemberitahuan</h5>
-                    <p class="text-muted small mb-4"><%= typeof error !== 'undefined' ? error : '' %></p>
-                    <button type="button" class="btn btn-dark w-100 py-2" data-bs-dismiss="modal">OK</button>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -392,11 +388,18 @@
             document.getElementById('weekEndBox').style.display = val === 'week' ? 'block' : 'none';
         }
 
-        // Script untuk Chart.js (Frekuensi & Durasi Waktu dalam MENIT)
+        function openStatusModal(repairId, currentStatus) {
+            const form = document.getElementById('updateStatusForm');
+            form.action = '/admin/repair/status/' + repairId;
+            document.getElementById('modalStatusSelect').value = currentStatus;
+            new bootstrap.Modal(document.getElementById('statusModal')).show();
+        }
+
+        // Processing machine statistics
         const machineStats = {};
         <% repairs.forEach(r => { %>
             const mName = "<%= r.namaMesin %>";
-            let durationMinutes = 30; // default 30 menit jika format jam bermasalah
+            let durationMinutes = 30;
             try {
                 const startParts = "<%= r.jamMulai %>".split(':');
                 const endParts = "<%= r.jamSelesai %>".split(':');
@@ -413,69 +416,82 @@
             machineStats[mName].duration += durationMinutes;
         <% }) %>
 
-        const labels = Object.keys(machineStats);
-        const dataCounts = labels.map(l => machineStats[l].count);
-        const dataDurations = labels.map(l => machineStats[l].duration);
+        // Sort machines by frequency descending to get Top 3
+        const sortedMachines = Object.keys(machineStats).sort((a, b) => machineStats[b].count - machineStats[a].count);
+        
+        let topLabels = [];
+        let topCounts = [];
+        
+        if (sortedMachines.length <= 3) {
+            topLabels = sortedMachines;
+            topCounts = sortedMachines.map(m => machineStats[m].count);
+        } else {
+            topLabels = sortedMachines.slice(0, 3);
+            topCounts = topLabels.map(m => machineStats[m].count);
+            
+            // Calculate "Lainnya" untuk mesin peringkat ke-4 dan seterusnya
+            let otherCount = 0;
+            for (let i = 3; i < sortedMachines.length; i++) {
+                otherCount += machineStats[sortedMachines[i]].count;
+            }
+            topLabels.push('Lainnya');
+            topCounts.push(otherCount);
+        }
 
-        const ctx = document.getElementById('repairAnalyticsChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
+        // 1. Pie Chart for Top 3 Machines
+        const pieCtx = document.getElementById('topMachinesPieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'pie',
             data: {
-                labels: labels.length > 0 ? labels : ['Tidak Ada Data'],
-                datasets: [
-                    {
-                        label: 'Frekuensi Perbaikan (Kali)',
-                        data: dataCounts.length > 0 ? dataCounts : [0],
-                        backgroundColor: '#0f172a',
-                        borderRadius: 8,
-                    },
-                    {
-                        label: 'Total Waktu Perbaikan (Menit)',
-                        data: dataDurations.length > 0 ? dataDurations : [0],
-                        backgroundColor: '#38bdf8',
-                        borderRadius: 8,
-                    }
-                ]
+                labels: topLabels.length > 0 ? topLabels : ['Tidak Ada Data'],
+                datasets: [{
+                    data: topCounts.length > 0 ? topCounts : [1],
+                    backgroundColor: ['#0f172a', '#38bdf8', '#cbd5e1', '#94a3b8'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'top' },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                label += context.parsed.y;
-                                if (context.datasetIndex === 1) {
-                                    label += ' Menit';
-                                } else {
-                                    label += ' Kali';
-                                }
-                                return label;
-                            }
-                        }
-                    }
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // 2. Bar Chart for Duration
+        const allLabels = Object.keys(machineStats);
+        const dataDurations = allLabels.map(l => machineStats[l].duration);
+
+        const ctx = document.getElementById('repairAnalyticsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: allLabels.length > 0 ? allLabels : ['Tidak Ada Data'],
+                datasets: [{
+                    label: 'Total Waktu Perbaikan (Menit)',
+                    data: dataDurations.length > 0 ? dataDurations : [0],
+                    backgroundColor: '#0f172a',
+                    borderRadius: 8,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' }
                 },
                 scales: {
                     y: { 
                         beginAtZero: true, 
                         grid: { color: '#f1f5f9' },
-                        title: { display: true, text: 'Jumlah / Menit' }
+                        title: { display: true, text: 'Menit' }
                     },
                     x: { grid: { display: false } }
                 }
             }
         });
-
-        <% if(typeof error !== 'undefined' && error) { %>
-        document.addEventListener("DOMContentLoaded", function() {
-            new bootstrap.Modal(document.getElementById('errorModal')).show();
-        });
-        <% } %>
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
