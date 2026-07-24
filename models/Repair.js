@@ -15,7 +15,8 @@ const repairSchema = new mongoose.Schema({
     jamMulai: { type: String, required: true },
     jamSelesai: { type: String, required: true },
     status: { type: String, enum: ['ok', 'open', 'progress'], default: 'open' },
-    keterangan: { type: String }
+    keterangan: { type: String },
+    lampiranFoto: { type: String } // Bersifat opsional (menyimpan path/link file gambar)
 });
 
 module.exports = mongoose.model('Repair', repairSchema);
