@@ -392,27 +392,25 @@
             document.getElementById('weekEndBox').style.display = val === 'week' ? 'block' : 'none';
         }
 
-        // Script untuk Chart.js (Diagram Mesin Sering Diperbaiki & Durasi Waktu)
-        // Data diambil otomatis dari ringkasan data di tabel atau variabel backend
+        // Script untuk Chart.js (Frekuensi & Durasi Waktu dalam MENIT)
         const machineStats = {};
         <% repairs.forEach(r => { %>
             const mName = "<%= r.namaMesin %>";
-            // Hitung durasi jam dari jamMulai & jamSelesai jika valid
-            let duration = 1; // default 1 jam jika format beda
+            let durationMinutes = 30; // default 30 menit jika format jam bermasalah
             try {
                 const startParts = "<%= r.jamMulai %>".split(':');
                 const endParts = "<%= r.jamSelesai %>".split(':');
                 const startMin = parseInt(startParts[0]) * 60 + parseInt(startParts[1]);
                 const endMin = parseInt(endParts[0]) * 60 + parseInt(endParts[1]);
-                let diff = (endMin - startMin) / 60;
-                if(diff > 0) duration = diff;
+                let diff = endMin - startMin;
+                if(diff > 0) durationMinutes = diff;
             } catch(e) {}
 
             if(!machineStats[mName]) {
                 machineStats[mName] = { count: 0, duration: 0 };
             }
             machineStats[mName].count += 1;
-            machineStats[mName].duration += Number(duration.toFixed(1));
+            machineStats[mName].duration += durationMinutes;
         <% }) %>
 
         const labels = Object.keys(machineStats);
@@ -432,7 +430,7 @@
                         borderRadius: 8,
                     },
                     {
-                        label: 'Total Waktu Perbaikan (Jam)',
+                        label: 'Total Waktu Perbaikan (Menit)',
                         data: dataDurations.length > 0 ? dataDurations : [0],
                         backgroundColor: '#38bdf8',
                         borderRadius: 8,
@@ -443,10 +441,31 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'top' }
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.parsed.y;
+                                if (context.datasetIndex === 1) {
+                                    label += ' Menit';
+                                } else {
+                                    label += ' Kali';
+                                }
+                                return label;
+                            }
+                        }
+                    }
                 },
                 scales: {
-                    y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: '#f1f5f9' },
+                        title: { display: true, text: 'Jumlah / Menit' }
+                    },
                     x: { grid: { display: false } }
                 }
             }
