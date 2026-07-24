@@ -176,7 +176,8 @@
         <!-- Form Kegiatan Perbaikan -->
         <div class="ios-card p-4 mb-4">
             <h5 class="fw-bold mb-3" style="letter-spacing: -0.5px;">Form Kegiatan Perbaikan</h5>
-            <form action="/repair/add" method="POST" enctype="multipart/form-data" class="row g-3 mt-1">
+            <!-- Perhatikan: enctype dihapus karena tidak ada upload file lagi -->
+            <form action="/repair/add" method="POST" class="row g-3 mt-1">
                 <div class="col-md-4">
                     <label class="form-label text-muted small fw-semibold">Tanggal</label>
                     <input type="date" name="tanggal" id="inputTanggal" class="form-control" required>
@@ -258,26 +259,6 @@
                 <div class="col-md-12">
                     <label class="form-label text-muted small fw-semibold">Keterangan</label>
                     <input type="text" name="keterangan" class="form-control" placeholder="Catatan tambahan (opsional)">
-                </div>
-
-                <!-- Attachment Foto (Opsional) -->
-                <div class="col-md-6">
-                    <label class="form-label text-muted small fw-semibold">Lampiran Foto (Opsional)</label>
-                    <input type="file" name="lampiranFoto" id="lampiranFoto" class="form-control" accept="image/*" onchange="handleImagePreview(event)">
-                </div>
-                <div class="col-md-6 d-flex align-items-end">
-                    <div id="downloadDropdownContainer" class="w-100" style="display: none;">
-                        <label class="form-label text-muted small fw-semibold">Aksi Gambar</label>
-                        <div class="dropdown w-100">
-                            <button class="btn btn-light-subtle w-100 dropdown-toggle text-start d-flex justify-content-between align-items-center" type="button" id="imageDropdownMenu" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span id="fileNameLabel" class="text-truncate">Gambar Terlampir</span>
-                            </button>
-                            <ul class="dropdown-menu w-100 shadow-sm border-0" aria-labelledby="imageDropdownMenu">
-                                <li><a class="dropdown-item py-2" href="#" id="previewImageLink" target="_blank">🔍 Lihat / Preview Gambar</a></li>
-                                <li><a class="dropdown-item py-2" href="#" id="downloadImageLink" download="laporan-perbaikan.jpg">📥 Unduh Gambar</a></li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="col-md-6 pt-2">
@@ -366,20 +347,6 @@
         newRow.querySelector('.sparepart-select').value = "";
         newRow.querySelector('input[name="jumlahPakais"]').value = "1";
         container.appendChild(newRow);
-    }
-
-    function handleImagePreview(event) {
-        const file = event.target.files[0];
-        const container = document.getElementById('downloadDropdownContainer');
-        if (file) {
-            const fileURL = URL.createObjectURL(file);
-            document.getElementById('fileNameLabel').textContent = file.name;
-            document.getElementById('previewImageLink').href = fileURL;
-            document.getElementById('downloadImageLink').href = fileURL;
-            container.style.display = "block";
-        } else {
-            container.style.display = "none";
-        }
     }
 
     function sendWhatsAppReport() {
