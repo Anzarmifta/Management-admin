@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const bcrypt = require('bcryptjs');
 const ExcelJS = require('exceljs');
 const multer = require('multer');
@@ -24,16 +25,6 @@ app.use(express.json());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// Konfigurasi Session dengan durasi 12 jam
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'rahasia_super_aman_123',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { 
-        maxAge: 12 * 60 * 60 * 1000 // 12 jam dalam milidetik
-    }
-}));
-
 // --- OPTIMASI KONEKSI MONGODB UNTUK SERVERLESS (VERCEL) ---
 const mongoUri = process.env.MONGODB_URI;
 
@@ -51,6 +42,23 @@ async function connectDB() {
         throw err;
     }
 }
+
+// Konfigurasi Session menggunakan MongoDB agar tidak hilang saat server restart
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'rahasia_super_aman_123',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: mongoUri,
+        ttl: 12 * 60 * 60, // Masa aktif session dalam detik (12 jam)
+        autoRemove: 'native'
+    }),
+    cookie: { 
+        maxAge: 12 * 60 * 60 * 1000, // 12 jam dalam milidetik
+        secure: process.env.NODE_ENV === 'production', // Otomatis true jika di production (HTTPS), false jika lokal
+        httpOnly: true
+    }
+}));
 
 // Middleware agar koneksi database selalu dicek di setiap request
 app.use(async (req, res, next) => {
@@ -72,9 +80,12 @@ const isAuthenticated = (req, res, next) => {
     if (req.session && req.session.user) {
         return next();
     }
-    req.session.destroy(() => {
-        res.redirect('/login?error=Session+expired.+Please+login+again.');
-    });
+    if (req.session) {
+        return req.session.destroy(() => {
+            res.redirect('/login?error=Session+expired.+Please+login+again.');
+        });
+    }
+    res.redirect('/login?error=Please+login+first.');
 };
 
 const isAdmin = (req, res, next) => {
@@ -104,6 +115,11 @@ const isAdmin = (req, res, next) => {
 app.get('/', (req, res) => res.redirect('/login'));
 
 app.get('/login', (req, res) => {
+    // Jika sudah login, langsung lempar ke dashboard masing-masing
+    if (req.session && req.session.user) {
+        if (req.session.user.role === 'admin') return res.redirect('/admin/sparepart');
+        return res.redirect('/teknisi/dashboard');
+    }
     const errorMsg = req.query.error || null;
     res.render('login', { error: errorMsg });
 });
@@ -114,8 +130,13 @@ app.post('/login', async (req, res) => {
         const user = await User.findOne({ username });
         if (user && await bcrypt.compare(password, user.password)) {
             req.session.user = user;
-            if (user.role === 'admin') return res.redirect('/admin/sparepart');
-            return res.redirect('/teknisi/dashboard');
+            // Simpan session secara eksplisit sebelum redirect untuk serverless
+            req.session.save((err) => {
+                if (err) console.error("Gagal menyimpan session:", err);
+                if (user.role === 'admin') return res.redirect('/admin/sparepart');
+                return res.redirect('/teknisi/dashboard');
+            });
+            return;
         }
         res.render('login', { error: 'Username atau Password salah!' });
     } catch (err) {
@@ -123,7 +144,12 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.get('/logout', (req, res) => req.session.destroy(() => res.redirect('/login')));
+app.get('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.clearCookie('connect.sid');
+        res.redirect('/login');
+    });
+});
 
 // --- ADMIN: HALAMAN SPAREPART & STOK ---
 app.get('/admin/sparepart', isAdmin, async (req, res) => {
@@ -285,16 +311,14 @@ app.post('/admin/sparepart/import', isAdmin, upload.single('fileExcel'), async (
         res.render('admin-sparepart', { user: req.session.user, spareparts, search: '', error: 'Gagal mengimport data Excel: ' + err.message });
     }
 });
+
 // --- API ROUTE: RIWAYAT PERBAIKAN BERDASARKAN SPAREPART ---
 app.get('/admin/sparepart/repair-history/:id', isAdmin, async (req, res) => {
     try {
         const sparepartId = req.params.id;
-        
-        // Cari data repair yang menggunakan sparepart ID tersebut dan populate datanya
         const repairs = await Repair.find({ 'sparepartsUsed.sparepart': sparepartId })
                                     .sort({ tanggal: -1 });
 
-        // Format data agar sesuai dengan yang dibaca oleh tabel di frontend modal
         const formattedData = repairs.map(r => {
             const usedItem = r.sparepartsUsed.find(item => item.sparepart && item.sparepart.toString() === sparepartId);
             return {
@@ -330,12 +354,10 @@ app.get('/admin/repair', isAdmin, async (req, res) => {
 
         let query = {};
 
-        // Filter berdasarkan Nama Mesin
         if (namaMesin) {
             query.namaMesin = new RegExp(namaMesin, 'i');
         }
 
-        // Filter berdasarkan Waktu
         if (filterType === 'date' && tanggalFilter) {
             const startDay = new Date(tanggalFilter);
             const endDay = new Date(tanggalFilter + 'T23:59:59');
@@ -378,7 +400,7 @@ app.get('/admin/repair', isAdmin, async (req, res) => {
     }
 });
 
-// --- ADMIN: MANAJEMEN AKUN (HALAMAN, TAMBAH, & HAPUS) ---
+// --- ADMIN: MANAJEMEN AKUN ---
 app.get('/admin/users', isAdmin, async (req, res) => {
     try {
         const users = await User.find();
@@ -410,7 +432,6 @@ app.post('/admin/user/add', isAdmin, async (req, res) => {
 app.post('/admin/user/delete/:id', isAdmin, async (req, res) => {
     try {
         const { id } = req.params;
-        // Mencegah admin menghapus akunnya sendiri yang sedang aktif login
         if (req.session.user._id === id || req.session.user.id === id) {
             return res.redirect('/admin/users?error=' + encodeURIComponent('Tidak dapat menghapus akun yang sedang digunakan saat ini!'));
         }
