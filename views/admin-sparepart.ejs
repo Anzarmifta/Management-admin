@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+h5 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -23,7 +23,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Navbar Clean Glassmorphism */
         .navbar {
             background: rgba(255, 255, 255, 0.85) !important;
             backdrop-filter: blur(12px);
@@ -36,7 +35,6 @@
             color: #0f172a !important;
         }
 
-        /* Card Container */
         .ios-card {
             background: var(--card-bg);
             border: 1px solid #e2e8f0;
@@ -44,7 +42,6 @@
             box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02);
         }
 
-        /* Form Controls & Inputs */
         .form-control, .form-select {
             border-radius: 10px;
             padding: 10px 14px;
@@ -53,12 +50,7 @@
             font-size: 0.875rem;
             transition: all 0.2s ease;
         }
-        .form-control:focus, .form-select:focus {
-            border-color: #0f172a;
-            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05);
-        }
 
-        /* Buttons Style */
         .btn {
             border-radius: 10px;
             padding: 8px 14px;
@@ -66,36 +58,16 @@
             font-size: 0.85rem;
             transition: all 0.2s;
         }
-        .btn-dark {
-            background-color: #0f172a;
-            border: none;
-        }
-        .btn-dark:hover {
-            background-color: #1e293b;
-        }
-        .btn-light-subtle {
-            background-color: #f1f5f9;
-            color: #334155;
-            border: 1px solid #e2e8f0;
-        }
-        .btn-light-subtle:hover {
-            background-color: #e2e8f0;
-            color: #0f172a;
-        }
+        .btn-dark { background-color: #0f172a; border: none; }
+        .btn-light-subtle { background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
 
-        /* Offcanvas Sidebar Kiri ala iOS */
         .offcanvas {
             border-top-right-radius: 24px;
             border-bottom-right-radius: 24px;
             border: none;
             box-shadow: 10px 0 40px rgba(15, 23, 42, 0.1);
         }
-        .offcanvas-header {
-            padding: 24px 24px 10px 24px;
-        }
-        .offcanvas-body {
-            padding: 20px 24px;
-        }
+
         .sidebar-item {
             display: flex;
             align-items: center;
@@ -112,12 +84,7 @@
             color: var(--text-main);
         }
 
-        /* Tabel Minimalis */
-        .table {
-            color: var(--text-main);
-            white-space: nowrap;
-            margin-bottom: 0;
-        }
+        .table { color: var(--text-main); white-space: nowrap; margin-bottom: 0; }
         .table > thead > tr > th {
             background-color: #f8fafc;
             color: var(--text-muted);
@@ -128,34 +95,16 @@
             border-bottom: 1px solid #e2e8f0;
             padding: 12px 14px;
         }
-        .table > tbody > tr > td {
-            padding: 12px 14px;
-            font-size: 0.875rem;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: middle;
-        }
+        .table > tbody > tr > td { padding: 12px 14px; font-size: 0.875rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
 
-        /* Modal Styling */
-        .modal-content {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
-        }
-        .modal-header, .modal-footer {
-            border-color: #f1f5f9;
-            padding: 18px 20px;
-        }
-        .modal-body {
-            padding: 20px;
-        }
+        .modal-content { border: none; border-radius: 20px; box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1); }
     </style>
 </head>
 <body>
 
-    <!-- Navbar dengan Tombol Menu Sidebar (Kiri) -->
     <nav class="navbar navbar-expand px-4 sticky-top">
         <div class="d-flex align-items-center gap-3">
-            <button class="btn btn-light-subtle d-flex align-items-center justify-content-center p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#leftSidebar" aria-controls="leftSidebar" style="width: 38px; height: 38px;">
+            <button class="btn btn-light-subtle d-flex align-items-center justify-content-center p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#leftSidebar" style="width: 38px; height: 38px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
                 </svg>
@@ -167,54 +116,28 @@
         </div>
     </nav>
 
-    <!-- Offcanvas Sidebar Muncul dari Kiri -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="leftSidebar" aria-labelledby="leftSidebarLabel" style="width: 280px;">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="leftSidebar">
         <div class="offcanvas-header border-0 pb-0">
-            <h5 class="offcanvas-title fw-bold" id="leftSidebarLabel">MTC.SYS</h5>
-            <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <h5 class="offcanvas-title fw-bold">MTC.SYS</h5>
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body d-flex flex-column justify-content-between">
             <div>
                 <p class="text-muted small mb-3 px-2">Menu Navigasi</p>
                 <div class="list-unstyled">
-                    <a href="/admin/sparepart" class="sidebar-item active">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam me-3" viewBox="0 0 16 16">
-                            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
-                        </svg>
-                        Sparepart Inventory
-                    </a>
-                    <a href="/admin/repair" class="sidebar-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tools me-3" viewBox="0 0 16 16">
-                            <path d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.618 2.64A3 3 0 1 0 4 15.357l2.64-2.618 2.675 2.675a1 1 0 0 1 .293.707v.071a1 1 0 0 0 .419.815L15 16l1-1-3.5-3.5L12 10l-4-4 .5-1.5L9 3 1 0z"/>
-                        </svg>
-                        Repair Logs
-                    </a>
-                    <a href="/admin/users" class="sidebar-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people me-3" viewBox="0 0 16 16">
-                            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A4.001 4.001 0 0 0 5 5c-2.21 0-4 1.79-4 4v1c0 1 .001 1 .5 1h3.197a.458.458 0 0 1-.261-.72z"/>
-                            <path d="M4 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
-                        </svg>
-                        Manajemen Akun
-                    </a>
+                    <a href="/admin/sparepart" class="sidebar-item active">Sparepart Inventory</a>
+                    <a href="/admin/repair" class="sidebar-item">Repair Logs</a>
+                    <a href="/admin/users" class="sidebar-item">Manajemen Akun</a>
                 </div>
             </div>
             <div class="pt-3 border-top">
-                <a href="/logout" class="sidebar-item text-danger">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left me-3" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
-                        <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
-                    </svg>
-                    Logout
-                </a>
+                <a href="/logout" class="sidebar-item text-danger">Logout</a>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="container my-4">
         <div class="ios-card p-4">
-            
-            <!-- Header & Action Buttons -->
             <div class="row align-items-center justify-content-between mb-4 gy-3">
                 <div class="col-12 col-md-4">
                     <h4 class="fw-bold mb-1" style="letter-spacing: -0.5px;">Sparepart Inventory</h4>
@@ -230,18 +153,13 @@
                 </div>
             </div>
 
-            <!-- Search Bar Minimalis -->
             <form action="/admin/sparepart" method="GET" class="mb-4">
                 <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan nama, kode, lokasi, atau type..." value="<%= search %>">
-                    <% if(search) { %>
-                        <a href="/admin/sparepart" class="btn btn-light-subtle text-danger border-start-0">Reset</a>
-                    <% } %>
+                    <input type="text" name="search" class="form-control" placeholder="Cari barang..." value="<%= search %>">
                     <button class="btn btn-dark px-4" type="submit">Cari</button>
                 </div>
             </form>
 
-            <!-- Table Section -->
             <div class="table-responsive">
                 <table class="table align-middle">
                     <thead>
@@ -249,55 +167,32 @@
                             <th>Kode</th>
                             <th>Nama Barang</th>
                             <th>Lokasi</th>
-                            <th>Type</th>
                             <th>Stok</th>
                             <th>Masuk</th>
                             <th>Keluar</th>
-                            <th>Fungsi</th>
                             <th class="text-end">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% if(spareparts.length === 0) { %>
-                            <tr><td colspan="9" class="text-center py-4 text-muted">Tidak ada data sparepart ditemukan.</td></tr>
-                        <% } %>
                         <% spareparts.forEach(s => { %>
                         <tr>
                             <td class="fw-semibold text-secondary"><%= s.kodeBarang %></td>
                             <td class="fw-bold text-dark"><%= s.namaBarang %></td>
                             <td><%= s.lokasiBarang || '-' %></td>
-                            <td><%= s.typeBarang || '-' %></td>
-                            <td>
-                                <span class="badge bg-<%= s.stokBarang > 0 ? 'dark' : 'danger' %> px-2 py-1 rounded-pill fw-medium">
-                                    <%= s.stokBarang %>
-                                </span>
-                            </td>
-                            <td class="text-success fw-medium">+<%= s.barangMasuk %></td>
-                            <td class="text-danger fw-medium">-<%= s.barangKeluar %></td>
-                            <td><%= s.fungsiBarang || '-' %></td>
+                            <td><span class="badge bg-<%= s.stokBarang > 0 ? 'dark' : 'danger' %> rounded-pill"><%= s.stokBarang %></span></td>
+                            <td class="text-success">+<%= s.barangMasuk %></td>
+                            <td class="text-danger">-<%= s.barangKeluar %></td>
                             <td class="text-end">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button class="riwayat-btn btn btn-light-subtle text-primary py-1 px-2" 
+                                <div class="btn-group btn-group-sm">
+                                    <button class="riwayat-btn btn btn-light-subtle text-primary" 
                                         data-id="<%= s._id %>" 
                                         data-nama="<%= s.namaBarang %>" 
                                         data-kode="<%= s.kodeBarang %>"
-                                        data-bs-toggle="modal" data-bs-target="#modalRiwayatPerbaikan" title="Riwayat Pemakaian & Perbaikan">
+                                        data-bs-toggle="modal" data-bs-target="#modalRiwayatPerbaikan">
                                         🛠️ Riwayat Teknisi
                                     </button>
-                                    <button class="ubah-stok-btn btn btn-light-subtle py-1 px-2" 
-                                        data-id="<%= s._id %>" 
-                                        data-nama="<%= s.namaBarang %>" 
-                                        data-kode="<%= s.kodeBarang %>"
-                                        data-bs-toggle="modal" data-bs-target="#modalUpdateStokDirect" title="Ubah Stok">
-                                        ± Qty
-                                    </button>
-                                    <button class="hapus-btn btn btn-light-subtle text-danger py-1 px-2" 
-                                        data-id="<%= s._id %>" 
-                                        data-nama="<%= s.namaBarang %>" 
-                                        data-kode="<%= s.kodeBarang %>"
-                                        data-bs-toggle="modal" data-bs-target="#modalHapus" title="Hapus">
-                                        Hapus
-                                    </button>
+                                    <button class="ubah-stok-btn btn btn-light-subtle" data-id="<%= s._id %>" data-nama="<%= s.namaBarang %>" data-kode="<%= s.kodeBarang %>" data-bs-toggle="modal" data-bs-target="#modalUpdateStokDirect">± Qty</button>
+                                    <button class="hapus-btn btn btn-light-subtle text-danger" data-id="<%= s._id %>" data-bs-toggle="modal" data-bs-target="#modalHapus">Hapus</button>
                                 </div>
                             </td>
                         </tr>
@@ -308,35 +203,31 @@
         </div>
     </div>
 
-    <!-- Modal Riwayat Sesuai Input Teknisi (PIC, Dipakai untuk apa, Cara Perbaikan) -->
     <div class="modal fade" id="modalRiwayatPerbaikan" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header border-0 pb-0">
                     <div>
-                        <h5 class="modal-title fw-bold">Riwayat Penggunaan & Log Perbaikan Teknisi</h5>
+                        <h5 class="modal-title fw-bold">Tracking Penggunaan Barang</h5>
                         <p class="text-muted small mb-0" id="riwayatSubTitle">Sparepart: -</p>
                     </div>
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="text-muted small mb-3">Menampilkan data detail sesuai input teknisi di lapangan (Mesin, PIC/Teknisi yang bertugas, jumlah pemakaian, dan cara perbaikannya):</p>
-                    <div class="table-responsive border rounded-3" style="max-height: 350px; overflow-y: auto;">
+                    <div class="table-responsive border rounded-3" style="max-height: 400px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>Tanggal</th>
-                                    <th>Nama Mesin</th>
-                                    <th>Qty Pakai</th>
                                     <th>PIC / Teknisi</th>
-                                    <th>Dipakai Untuk / Keterangan</th>
-                                    <th>Cara Perbaikan / Tindakan</th>
+                                    <th>Mesin</th>
+                                    <th>Qty Pakai</th>
+                                    <th>Tujuan / Problem</th>
+                                    <th>Tindakan / Perbaikan</th>
                                 </tr>
                             </thead>
                             <tbody id="tabelBodyRiwayat">
-                                <tr>
-                                    <td colspan="6" class="text-center py-3 text-muted">Memuat data log teknisi...</td>
-                                </tr>
+                                <tr><td colspan="6" class="text-center py-3 text-muted">Memuat data log teknisi...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -348,173 +239,8 @@
         </div>
     </div>
 
-    <!-- Modal Tambah Barang -->
-    <div class="modal fade" id="modalSparepart" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <form action="/admin/sparepart/save" method="POST" class="modal-content">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Tambah Sparepart Baru</h5>
-                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3"><label class="form-label text-muted small fw-semibold">Nama Barang</label><input type="text" name="namaBarang" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label text-muted small fw-semibold">Kode Barang</label><input type="text" name="kodeBarang" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label text-muted small fw-semibold">Lokasi Barang</label><input type="text" name="lokasiBarang" class="form-control" placeholder="Contoh: Rak A-1"></div>
-                    <div class="mb-3"><label class="form-label text-muted small fw-semibold">Type Barang</label><input type="text" name="typeBarang" class="form-control"></div>
-                    <div class="mb-3"><label class="form-label text-muted small fw-semibold">Stok Awal</label><input type="number" name="stokBarang" class="form-control" value="0" min="0" required></div>
-                    <div class="mb-0"><label class="form-label text-muted small fw-semibold">Fungsi / Pemakaian Mesin</label><input type="text" name="fungsiBarang" class="form-control" placeholder="Contoh: Untuk Mesin Conveyor A"></div>
-                </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="submit" class="btn btn-dark w-100 py-2">Simpan Sparepart</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Import Excel -->
-    <div class="modal fade" id="modalImport" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <form action="/admin/sparepart/import" method="POST" enctype="multipart/form-data" class="modal-content">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Import Data Excel</h5>
-                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted small mb-3">Pilih file Excel (.xlsx / .xls) yang sesuai dengan format sistem.</p>
-                    <div class="mb-0">
-                        <input type="file" name="fileExcel" class="form-control" accept=".xlsx, .xls" required>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="submit" class="btn btn-dark w-100 py-2">Upload & Import</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Update Stok Universal -->
-    <div class="modal fade" id="modalUpdateStok" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <form action="/admin/sparepart/update-stok" method="POST" class="modal-content">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Penyesuaian Stok</h5>
-                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small fw-semibold">Cari Barang:</label>
-                        <input type="text" id="globalSearchStock" class="form-control mb-2" placeholder="Ketik untuk memfilter pilihan..." onkeyup="filterStockOptions(this)">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small fw-semibold">Pilih Sparepart</label>
-                        <select name="sparepartId" id="globalStockSelect" class="form-select" size="4" required>
-                            <% spareparts.forEach(s => { %>
-                                <option value="<%= s._id %>" data-keywords="<%= (s.namaBarang + ' ' + s.kodeBarang + ' ' + (s.typeBarang || '') + ' ' + (s.lokasiBarang || '')).toLowerCase() %>">
-                                    [<%= s.kodeBarang %>] <%= s.namaBarang %> (Stok: <%= s.stokBarang %>)
-                                </option>
-                            <% }) %>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small fw-semibold">Jenis Perubahan</label>
-                        <select name="jenis" class="form-select" required>
-                            <option value="tambah">Tambah Qty (Barang Masuk)</option>
-                            <option value="kurang">Kurang Qty (Barang Keluar / Rusak)</option>
-                        </select>
-                    </div>
-                    <div class="mb-0">
-                        <label class="form-label text-muted small fw-semibold">Jumlah Qty</label>
-                        <input type="number" name="jumlah" class="form-control" value="1" min="1" required>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="submit" class="btn btn-dark w-100 py-2">Proses Stok</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Update Stok Langsung (Per Baris) -->
-    <div class="modal fade" id="modalUpdateStokDirect" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <form action="/admin/sparepart/update-stok" method="POST" class="modal-content">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Update Stok Item</h5>
-                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted small mb-3">Item: <strong id="directNamaBarang" class="text-dark"></strong></p>
-                    <input type="hidden" name="sparepartId" id="directSparepartId">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small fw-semibold">Jenis Perubahan</label>
-                        <select name="jenis" class="form-select" required>
-                            <option value="tambah">Tambah Qty (Barang Masuk)</option>
-                            <option value="kurang">Kurang Qty (Barang Keluar / Rusak)</option>
-                        </select>
-                    </div>
-                    <div class="mb-0">
-                        <label class="form-label text-muted small fw-semibold">Jumlah Qty</label>
-                        <input type="number" name="jumlah" class="form-control" value="1" min="1" required>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="submit" class="btn btn-dark w-100 py-2">Simpan Perubahan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Konfirmasi Hapus -->
-    <div class="modal fade" id="modalHapus" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 360px;">
-            <form id="formHapus" action="" method="POST" class="modal-content text-center p-3">
-                <div class="modal-body">
-                    <h5 class="fw-bold mb-2">Hapus Item?</h5>
-                    <p class="text-muted small mb-4">Apakah Anda yakin ingin menghapus <strong id="hapusNamaBarang" class="text-dark"></strong>? Tindakan ini tidak dapat dibatalkan.</p>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-light-subtle w-50 py-2" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-danger w-50 py-2">Hapus</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Pop-up Modal untuk Error / Akses Ditolak (Ala iOS) -->
-    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 340px;">
-            <div class="modal-content border-0 p-3 text-center">
-                <div class="modal-body">
-                    <div class="mb-3 text-danger">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
-                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                        </svg>
-                    </div>
-                    <h5 class="fw-bold mb-2">Pemberitahuan</h5>
-                    <p class="text-muted small mb-4"><%= typeof error !== 'undefined' ? error : '' %></p>
-                    <button type="button" class="btn btn-dark w-100 py-2" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        function filterStockOptions(inputElement) {
-            const keyword = inputElement.value.toLowerCase();
-            const select = document.getElementById('globalStockSelect');
-            const options = select.getElementsByTagName('option');
-
-            for (let i = 0; i < options.length; i++) {
-                const keywords = options[i].getAttribute('data-keywords');
-                if (keywords.includes(keyword)) {
-                    options[i].style.display = "";
-                } else {
-                    options[i].style.display = "none";
-                }
-            }
-        }
-
-        // Script untuk mengambil data riwayat sesuai input teknisi (PIC, untuk apa, cara perbaikan)
+        // Logika Riwayat Teknisi
         document.querySelectorAll('.riwayat-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
@@ -525,71 +251,42 @@
                 const tbody = document.getElementById('tabelBodyRiwayat');
                 tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">Memuat data log teknisi...</td></tr>`;
 
+                // Fetch data dari Repair Logs berdasarkan Sparepart ID
                 fetch(`/admin/sparepart/repair-history/${id}`)
                     .then(response => response.json())
                     .then(data => {
-                        if (data.length === 0) {
-                            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">Belum ada riwayat penggunaan atau perbaikan oleh teknisi.</td></tr>`;
+                        if (!data || data.length === 0) {
+                            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">Barang ini belum pernah tercatat digunakan oleh teknisi.</td></tr>`;
                             return;
                         }
                         let rows = '';
                         data.forEach(item => {
                             rows += `
                                 <tr>
-                                    <td class="text-muted">${item.tanggal}</td>
-                                    <td class="fw-bold text-dark">${item.namaMesin}</td>
-                                    <td><span class="badge bg-danger">-${item.jumlahKeluar}</span></td>
-                                    <td><span class="badge bg-light text-dark border">${item.namaTeknisi || 'PIC Tidak Diketahui'}</span></td>
-                                    <td>${item.keteranganPemakaian || '-'}</td>
-                                    <td>${item.caraPerbaikan || '-'}</td>
-                                </tr>
-                            `;
+                                    <td class="text-muted small">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
+                                    <td><span class="badge bg-light text-dark border">${item.pic || 'N/A'}</span></td>
+                                    <td class="fw-bold">${item.namaMesin}</td>
+                                    <td><span class="text-danger fw-bold">-${item.jumlahPakai}</span></td>
+                                    <td class="small" style="white-space: normal; min-width: 150px;">${item.problem || '-'}</td>
+                                    <td class="small" style="white-space: normal; min-width: 200px;">${item.caraPerbaikan || '-'}</td>
+                                </tr>`;
                         });
                         tbody.innerHTML = rows;
                     })
                     .catch(err => {
-                        // Fallback simulasi struktur data teknisi jika fetch backend belum aktif
-                        tbody.innerHTML = `
-                            <tr>
-                                <td class="text-muted">24/07/2026</td>
-                                <td class="fw-bold text-dark">Mesin Conveyor Utama</td>
-                                <td><span class="badge bg-danger">-1</span></td>
-                                <td><span class="badge bg-light text-dark border">Budi (Teknisi)</span></td>
-                                <td>Penggantian roller penggerak utama yang aus</td>
-                                <td>Melepas baut pengunci, mengganti roller lama dengan yang baru, dan melakukan kalibrasi tegangan belt.</td>
-                            </tr>
-                        `;
+                        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-danger">Gagal mengambil data dari server.</td></tr>`;
                     });
             });
         });
 
-        document.querySelectorAll('.ubah-stok-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.getAttribute('data-id');
-                const nama = this.getAttribute('data-nama');
-                const kode = this.getAttribute('data-kode');
-
-                document.getElementById('directSparepartId').value = id;
-                document.getElementById('directNamaBarang').innerText = `[${kode}] ${nama}`;
-            });
-        });
-
-        document.querySelectorAll('.hapus-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.getAttribute('data-id');
-                const nama = this.getAttribute('data-nama');
-                const kode = this.getAttribute('data-kode');
-
-                document.getElementById('hapusNamaBarang').innerText = `[${kode}] ${nama}`;
-                document.getElementById('formHapus').action = `/admin/sparepart/delete/${id}`;
-            });
-        });
-
-        <% if(typeof error !== 'undefined' && error) { %>
-        document.addEventListener("DOMContentLoaded", function() {
-            new bootstrap.Modal(document.getElementById('errorModal')).show();
-        });
-        <% } %>
+        // Script filter stok & modal update stok
+        function filterStockOptions(el) {
+            const kw = el.value.toLowerCase();
+            const opts = document.getElementById('globalStockSelect').options;
+            for (let opt of opts) {
+                opt.style.display = opt.getAttribute('data-keywords').includes(kw) ? "" : "none";
+            }
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
