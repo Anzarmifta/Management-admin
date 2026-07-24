@@ -82,6 +82,15 @@
             background-color: #e2e8f0;
             color: #0f172a;
         }
+        .btn-success-wa {
+            background-color: #25d366;
+            color: #fff;
+            border: none;
+        }
+        .btn-success-wa:hover {
+            background-color: #1ebd5a;
+            color: #fff;
+        }
 
         /* Offcanvas Sidebar Kiri ala iOS */
         .offcanvas {
@@ -211,32 +220,32 @@
         <!-- Form Kegiatan Perbaikan -->
         <div class="ios-card p-4 mb-4">
             <h5 class="fw-bold mb-3" style="letter-spacing: -0.5px;">Form Kegiatan Perbaikan</h5>
-            <form action="/repair/add" method="POST" class="row g-3 mt-1">
+            <form action="/repair/add" method="POST" enctype="multipart/form-data" class="row g-3 mt-1">
                 <div class="col-md-4">
                     <label class="form-label text-muted small fw-semibold">Tanggal</label>
-                    <input type="date" name="tanggal" class="form-control" required>
+                    <input type="date" name="tanggal" id="inputTanggal" class="form-control" required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label text-muted small fw-semibold">Shift</label>
-                    <input type="text" name="shift" class="form-control" placeholder="Contoh: Shift 1" required>
+                    <input type="text" name="shift" id="inputShift" class="form-control" placeholder="Contoh: Shift 1" required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label text-muted small fw-semibold">Nama Mesin</label>
-                    <input type="text" name="namaMesin" class="form-control" placeholder="Nama mesin..." required>
+                    <input type="text" name="namaMesin" id="inputNamaMesin" class="form-control" placeholder="Nama mesin..." required>
                 </div>
                 
                 <div class="col-md-6">
                     <label class="form-label text-muted small fw-semibold">Problem</label>
-                    <textarea name="problem" class="form-control" rows="2" placeholder="Deskripsikan masalah..." required></textarea>
+                    <textarea name="problem" id="inputProblem" class="form-control" rows="2" placeholder="Deskripsikan masalah..." required></textarea>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label text-muted small fw-semibold">Analisa Penyebab</label>
-                    <textarea name="analisaPenyebab" class="form-control" rows="2" placeholder="Analisa kerusakan..."></textarea>
+                    <textarea name="analisaPenyebab" id="inputAnalisa" class="form-control" rows="2" placeholder="Analisa kerusakan..."></textarea>
                 </div>
                 
                 <div class="col-md-6">
                     <label class="form-label text-muted small fw-semibold">Cara Perbaikan</label>
-                    <textarea name="caraPerbaikan" class="form-control" rows="2" placeholder="Tindakan perbaikan..."></textarea>
+                    <textarea name="caraPerbaikan" id="inputPerbaikan" class="form-control" rows="2" placeholder="Tindakan perbaikan..."></textarea>
                 </div>
                 
                 <!-- Multi Sparepart Input dengan Fitur Pencarian -->
@@ -272,7 +281,7 @@
 
                 <div class="col-md-3">
                     <label class="form-label text-muted small fw-semibold">PIC</label>
-                    <input type="text" name="pic" class="form-control" placeholder="Nama teknisi" required>
+                    <input type="text" name="pic" id="inputPic" class="form-control" placeholder="Nama teknisi" required>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label text-muted small fw-semibold">Jam Mulai</label>
@@ -284,7 +293,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label text-muted small fw-semibold">Status</label>
-                    <select name="status" class="form-select">
+                    <select name="status" id="inputStatus" class="form-select">
                         <option value="open">Open</option>
                         <option value="progress">Progress</option>
                         <option value="ok">OK</option>
@@ -295,8 +304,38 @@
                     <input type="text" name="keterangan" class="form-control" placeholder="Catatan tambahan (opsional)">
                 </div>
 
-                <div class="col-md-12 pt-2">
+                <!-- Attachment Foto / Gambar dengan Dropdown Preview & Download -->
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-semibold">Lampiran Foto Kerusakan / Hasil Kerja</label>
+                    <input type="file" name="lampiranFoto" id="lampiranFoto" class="form-control" accept="image/*" onchange="handleImagePreview(event)">
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <div id="downloadDropdownContainer" class="w-100" style="display: none;">
+                        <label class="form-label text-muted small fw-semibold">Aksi Gambar</label>
+                        <div class="dropdown w-100">
+                            <button class="btn btn-light-subtle w-100 dropdown-toggle text-start d-flex justify-content-between align-items-center" type="button" id="imageDropdownMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span id="fileNameLabel" class="text-truncate">Gambar Terlampir</span>
+                            </button>
+                            <ul class="dropdown-menu w-100 shadow-sm border-0" aria-labelledby="imageDropdownMenu">
+                                <li><a class="dropdown-item py-2" href="#" id="previewImageLink" target="_blank">🔍 Lihat / Preview Gambar</a></li>
+                                <li><a class="dropdown-item py-2" href="#" id="downloadImageLink" download="laporan-perbaikan.jpg">📥 Unduh Gambar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 pt-2">
                     <button type="submit" class="btn btn-dark w-100 py-2">Simpan Laporan & Ambil Sparepart</button>
+                </div>
+                
+                <!-- Tombol Kirim Laporan via WhatsApp (Bisa Pilih Kontak di WhatsApp) -->
+                <div class="col-md-6 pt-2">
+                    <button type="button" class="btn btn-success-wa w-100 py-2 d-flex align-items-center justify-content-center gap-2" onclick="sendWhatsAppReport()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16">
+                            <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.348.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.342-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.078.38-.058 1.17-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+                        </svg>
+                        Kirim Laporan via WhatsApp
+                    </button>
                 </div>
             </form>
         </div>
@@ -419,6 +458,59 @@
 
         newRow.querySelector('input[name="jumlahPakais"]').value = "1";
         container.appendChild(newRow);
+    }
+
+    // Fungsi Preview dan Dropdown Unduh Gambar yang di-upload
+    function handleImagePreview(event) {
+        const file = event.target.files[0];
+        const container = document.getElementById('downloadDropdownContainer');
+        const fileNameLabel = document.getElementById('fileNameLabel');
+        const previewLink = document.getElementById('previewImageLink');
+        const downloadLink = document.getElementById('downloadImageLink');
+
+        if (file) {
+            const fileURL = URL.createObjectURL(file);
+            fileNameLabel.textContent = file.name;
+            previewLink.href = fileURL;
+            downloadLink.href = fileURL;
+            downloadLink.download = file.name;
+            container.style.display = "block";
+        } else {
+            container.style.display = "none";
+        }
+    }
+
+    // Fungsi Kirim Pesan ke WhatsApp (Tanpa nomor tujuan agar Anda bisa bebas memilih kontak di WhatsApp)
+    function sendWhatsAppReport() {
+        const tanggal = document.getElementById('inputTanggal').value;
+        const shift = document.getElementById('inputShift').value;
+        const namaMesin = document.getElementById('inputNamaMesin').value;
+        const problem = document.getElementById('inputProblem').value;
+        const analisa = document.getElementById('inputAnalisa').value;
+        const perbaikan = document.getElementById('inputPerbaikan').value;
+        const pic = document.getElementById('inputPic').value;
+        const status = document.getElementById('inputStatus').value.toUpperCase();
+
+        if (!namaMesin || !problem || !pic || !tanggal) {
+            alert('Mohon lengkapi minimal Tanggal, Nama Mesin, Problem, dan PIC sebelum mengirim laporan ke WhatsApp!');
+            return;
+        }
+
+        let message = `*LAPORAN PERBAIKAN MESIN (MTC.SYS)*\n\n` +
+                      `📅 *Tanggal:* ${tanggal}\n` +
+                      `⏰ *Shift:* ${shift}\n` +
+                      `⚙️ *Nama Mesin:* ${namaMesin}\n` +
+                      `⚠️ *Problem:* ${problem}\n` +
+                      `🔍 *Analisa:* ${analisa || '-'}\n` +
+                      `🛠️ *Perbaikan:* ${perbaikan || '-'}\n` +
+                      `👨‍🔧 *PIC:* ${pic}\n` +
+                      `📌 *Status:* ${status}`;
+
+        const encodedMessage = encodeURIComponent(message);
+        // Menggunakan link universal WhatsApp tanpa nomor tujuan agar aplikasi/web WhatsApp mengarahkan Anda ke halaman pilih kontak/chat
+        const waURL = `https://api.whatsapp.com/send?text=${encodedMessage}`;
+        
+        window.open(waURL, '_blank');
     }
 
     // Trigger Pop-up Modal jika ada Error
