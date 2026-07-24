@@ -137,6 +137,13 @@
     </div>
 
     <div class="container my-4">
+        <% if (locals.error && error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
+
         <div class="ios-card p-4">
             <div class="row align-items-center justify-content-between mb-4 gy-3">
                 <div class="col-12 col-md-4">
@@ -191,8 +198,15 @@
                                         data-bs-toggle="modal" data-bs-target="#modalRiwayatPerbaikan">
                                         🛠️ Riwayat Teknisi
                                     </button>
-                                    <button class="ubah-stok-btn btn btn-light-subtle" data-id="<%= s._id %>" data-nama="<%= s.namaBarang %>" data-kode="<%= s.kodeBarang %>" data-bs-toggle="modal" data-bs-target="#modalUpdateStokDirect">± Qty</button>
-                                    <button class="hapus-btn btn btn-light-subtle text-danger" data-id="<%= s._id %>" data-bs-toggle="modal" data-bs-target="#modalHapus">Hapus</button>
+                                    <button class="ubah-stok-btn btn btn-light-subtle" 
+                                        data-id="<%= s._id %>" 
+                                        data-nama="<%= s.namaBarang %>" 
+                                        data-kode="<%= s.kodeBarang %>" 
+                                        data-bs-toggle="modal" data-bs-target="#modalUpdateStokDirect">± Qty</button>
+                                    <button class="hapus-btn btn btn-light-subtle text-danger" 
+                                        data-id="<%= s._id %>" 
+                                        data-nama="<%= s.namaBarang %>"
+                                        data-bs-toggle="modal" data-bs-target="#modalHapus">Hapus</button>
                                 </div>
                             </td>
                         </tr>
@@ -203,7 +217,169 @@
         </div>
     </div>
 
-    <!-- Modal Tracking / Riwayat Sesuai Format Tabel Repair Logs -->
+    <!-- MODAL TAMBAH SPAREPART -->
+    <div class="modal fade" id="modalSparepart" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="/admin/sparepart/save" method="POST">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold">Tambah Sparepart Baru</h5>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Kode Barang</label>
+                            <input type="text" name="kodeBarang" class="form-control" required placeholder="Contoh: P001">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Nama Barang</label>
+                            <input type="text" name="namaBarang" class="form-control" required placeholder="Contoh: Piston">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Lokasi Barang</label>
+                            <input type="text" name="lokasiBarang" class="form-control" placeholder="Contoh: Rak A1">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Type Barang</label>
+                            <input type="text" name="typeBarang" class="form-control" placeholder="Contoh: Heavy Duty">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Stok Awal</label>
+                            <input type="number" name="stokBarang" class="form-control" value="0" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Fungsi Barang</label>
+                            <textarea name="fungsiBarang" class="form-control" rows="2" placeholder="Fungsi komponen..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light-subtle" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-dark">Simpan Barang</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ATUR STOK UMUM (TAMBAH / KURANG QTY) -->
+    <div class="modal fade" id="modalUpdateStok" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="/admin/sparepart/update-stok" method="POST">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold">Atur Stok Sparepart</h5>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Pilih Sparepart</label>
+                            <select name="sparepartId" class="form-select" required>
+                                <option value="" disabled selected>-- Pilih Barang --</option>
+                                <% spareparts.forEach(s => { %>
+                                    <option value="<%= s._id %>">[<%= s.kodeBarang %>] <%= s.namaBarang %> (Stok: <%= s.stokBarang %>)</option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Jenis Perubahan</label>
+                            <select name="jenis" class="form-select" required>
+                                <option value="tambah">Tambah Stok (Masuk)</option>
+                                <option value="kurang">Kurangi Stok (Keluar)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Jumlah Qty</label>
+                            <input type="number" name="jumlah" class="form-control" min="1" value="1" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light-subtle" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-dark">Proses Stok</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ATUR STOK LANGSUNG DARI BARIS TABEL (± Qty) -->
+    <div class="modal fade" id="modalUpdateStokDirect" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="/admin/sparepart/update-stok" method="POST">
+                    <input type="hidden" name="sparepartId" id="directSparepartId">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold">Atur Stok: <span id="directSparepartName" class="text-primary"></span></h5>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Jenis Perubahan</label>
+                            <select name="jenis" class="form-select" required>
+                                <option value="tambah">Tambah Stok (Masuk)</option>
+                                <option value="kurang">Kurangi Stok (Keluar)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Jumlah Qty</label>
+                            <input type="number" name="jumlah" class="form-control" min="1" value="1" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light-subtle" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-dark">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL IMPORT EXCEL -->
+    <div class="modal fade" id="modalImport" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="/admin/sparepart/import" method="POST" enctype="multipart/form-data">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold">Import Data Sparepart (Excel)</h5>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Pilih File Excel (.xlsx)</label>
+                            <input type="file" name="fileExcel" class="form-control" accept=".xlsx, .xls" required>
+                            <div class="form-text small mt-1">Pastikan format kolom sesuai dengan template export Excel sistem.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light-subtle" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-dark">Upload & Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HAPUS BARANG -->
+    <div class="modal fade" id="modalHapus" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="formHapus" method="POST">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold text-danger">Konfirmasi Hapus</h5>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-0">Apakah Anda yakin ingin menghapus sparepart <strong id="hapusNamaBarang" class="text-dark"></strong> dari database?</p>
+                    </div>
+                    <div class="modal-footer border-0 pt-3">
+                        <button type="button" class="btn btn-light-subtle" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tracking / Riwayat Perbaikan -->
     <div class="modal fade" id="modalRiwayatPerbaikan" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -246,7 +422,27 @@
     </div>
 
     <script>
-        // Logika Mengambil Data Berdasarkan Pemakaian Sparepart
+        // Logika Tombol ± Qty Direct pada Tabel
+        document.querySelectorAll('.ubah-stok-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const nama = this.getAttribute('data-nama');
+                document.getElementById('directSparepartId').value = id;
+                document.getElementById('directSparepartName').innerText = nama;
+            });
+        });
+
+        // Logika Tombol Hapus pada Tabel
+        document.querySelectorAll('.hapus-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const nama = this.getAttribute('data-nama');
+                document.getElementById('hapusNamaBarang').innerText = nama;
+                document.getElementById('formHapus').action = `/admin/sparepart/delete/${id}`;
+            });
+        });
+
+        // Logika Mengambil Data Riwayat Berdasarkan Pemakaian Sparepart
         document.querySelectorAll('.riwayat-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
@@ -257,7 +453,6 @@
                 const tbody = document.getElementById('tabelBodyRiwayat');
                 tbody.innerHTML = `<tr><td colspan="11" class="text-center py-3 text-muted">Memuat data log teknisi...</td></tr>`;
 
-                // Fetch data dari endpoint backend
                 fetch(`/admin/sparepart/repair-history/${id}`)
                     .then(response => response.json())
                     .then(data => {
