@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
 const bcrypt = require('bcryptjs');
 const ExcelJS = require('exceljs');
 const multer = require('multer');
@@ -47,21 +46,16 @@ async function connectDB() {
     }
 }
 
-// Konfigurasi Session menggunakan MongoDB agar tidak hilang saat server restart / cold start
+// Konfigurasi Session Standar Express (Tanpa MongoStore)
 app.use(session({
     secret: process.env.SESSION_SECRET || 'rahasia_super_aman_123',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: mongoUri,
-        ttl: 12 * 60 * 60, // Masa aktif session dalam detik (12 jam)
-        autoRemove: 'native'
-    }),
     cookie: { 
         maxAge: 12 * 60 * 60 * 1000, // 12 jam dalam milidetik
         secure: process.env.NODE_ENV === 'production', // true saat di production (HTTPS), false jika lokal
         httpOnly: true,
-        sameSite: 'lax' // Mencegah cookie diblokir oleh browser di environment serverless/proxy
+        sameSite: 'lax'
     }
 }));
 
@@ -80,17 +74,12 @@ app.use(async (req, res, next) => {
     }
 });
 
-// Middleware Autentikasi dengan Auto-Destroy Session jika Expired
+// Middleware Autentikasi
 const isAuthenticated = (req, res, next) => {
     if (req.session && req.session.user) {
         return next();
     }
-    if (req.session) {
-        return req.session.destroy(() => {
-            res.redirect('/login?error=Session+expired.+Please+login+again.');
-        });
-    }
-    res.redirect('/login?error=Please+login+first.');
+    res.redirect('/login?error=Session+expired.+Please+login+again.');
 };
 
 const isAdmin = (req, res, next) => {
@@ -99,9 +88,7 @@ const isAdmin = (req, res, next) => {
     }
     
     if (!req.session || !req.session.user) {
-        return req.session.destroy(() => {
-            res.redirect('/login?error=Session+expired.+Please+login+again.');
-        });
+        return res.redirect('/login?error=Session+expired.+Please+login+again.');
     }
 
     Sparepart.find().then(spareparts => {
@@ -134,7 +121,6 @@ app.post('/login', async (req, res) => {
         const user = await User.findOne({ username });
         if (user && await bcrypt.compare(password, user.password)) {
             req.session.user = user;
-            // Memastikan data session tersimpan tuntas di MongoDB sebelum redirect
             req.session.save((err) => {
                 if (err) console.error("Gagal menyimpan session:", err);
                 if (user.role === 'admin') return res.redirect('/admin/sparepart');
