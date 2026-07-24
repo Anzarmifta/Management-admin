@@ -1,4 +1,4 @@
-h5 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -203,31 +203,37 @@ h5 <!DOCTYPE html>
         </div>
     </div>
 
+    <!-- Modal Tracking / Riwayat Sesuai Format Tabel Repair Logs -->
     <div class="modal fade" id="modalRiwayatPerbaikan" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header border-0 pb-0">
                     <div>
-                        <h5 class="modal-title fw-bold">Tracking Penggunaan Barang</h5>
+                        <h5 class="modal-title fw-bold">Daftar Kegiatan Perbaikan (Berdasarkan Pemakaian Sparepart)</h5>
                         <p class="text-muted small mb-0" id="riwayatSubTitle">Sparepart: -</p>
                     </div>
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="table-responsive border rounded-3" style="max-height: 400px; overflow-y: auto;">
+                    <div class="table-responsive border rounded-3" style="max-height: 450px; overflow-y: auto;">
                         <table class="table table-sm align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>Tanggal</th>
-                                    <th>PIC / Teknisi</th>
+                                    <th>Shift</th>
                                     <th>Mesin</th>
+                                    <th>Problem</th>
+                                    <th>Analisa</th>
+                                    <th>Perbaikan</th>
                                     <th>Qty Pakai</th>
-                                    <th>Tujuan / Problem</th>
-                                    <th>Tindakan / Perbaikan</th>
+                                    <th>PIC</th>
+                                    <th>Jam</th>
+                                    <th>Status</th>
+                                    <th>Ket</th>
                                 </tr>
                             </thead>
                             <tbody id="tabelBodyRiwayat">
-                                <tr><td colspan="6" class="text-center py-3 text-muted">Memuat data log teknisi...</td></tr>
+                                <tr><td colspan="11" class="text-center py-3 text-muted">Memuat data log teknisi...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -240,7 +246,7 @@ h5 <!DOCTYPE html>
     </div>
 
     <script>
-        // Logika Riwayat Teknisi
+        // Logika Mengambil Data Berdasarkan Pemakaian Sparepart
         document.querySelectorAll('.riwayat-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
@@ -249,44 +255,45 @@ h5 <!DOCTYPE html>
 
                 document.getElementById('riwayatSubTitle').innerText = `Sparepart: [${kode}] ${nama}`;
                 const tbody = document.getElementById('tabelBodyRiwayat');
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">Memuat data log teknisi...</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="11" class="text-center py-3 text-muted">Memuat data log teknisi...</td></tr>`;
 
-                // Fetch data dari Repair Logs berdasarkan Sparepart ID
+                // Fetch data dari endpoint backend
                 fetch(`/admin/sparepart/repair-history/${id}`)
                     .then(response => response.json())
                     .then(data => {
                         if (!data || data.length === 0) {
-                            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">Barang ini belum pernah tercatat digunakan oleh teknisi.</td></tr>`;
+                            tbody.innerHTML = `<tr><td colspan="11" class="text-center py-4 text-muted">Belum ada aktivitas perbaikan yang menggunakan sparepart ini.</td></tr>`;
                             return;
                         }
                         let rows = '';
                         data.forEach(item => {
+                            const badgeColor = item.status === 'ok' ? 'success' : (item.status === 'progress' ? 'warning' : 'danger');
                             rows += `
                                 <tr>
-                                    <td class="text-muted small">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
-                                    <td><span class="badge bg-light text-dark border">${item.pic || 'N/A'}</span></td>
-                                    <td class="fw-bold">${item.namaMesin}</td>
-                                    <td><span class="text-danger fw-bold">-${item.jumlahPakai}</span></td>
-                                    <td class="small" style="white-space: normal; min-width: 150px;">${item.problem || '-'}</td>
-                                    <td class="small" style="white-space: normal; min-width: 200px;">${item.caraPerbaikan || '-'}</td>
+                                    <td class="fw-semibold text-secondary">${item.tanggal ? item.tanggal.split('T')[0] : '-'}</td>
+                                    <td>${item.shift || '-'}</td>
+                                    <td class="fw-bold text-dark">${item.namaMesin || '-'}</td>
+                                    <td>${item.problem || '-'}</td>
+                                    <td>${item.analisaPenyebab || '-'}</td>
+                                    <td>${item.caraPerbaikan || '-'}</td>
+                                    <td><span class="badge bg-danger">-${item.jumlahPakai || 1}</span></td>
+                                    <td>${item.pic || '-'}</td>
+                                    <td>${item.jamMulai || '-'} - ${item.jamSelesai || '-'}</td>
+                                    <td>
+                                        <span class="badge bg-${badgeColor} px-2 py-1 rounded-pill fw-medium">
+                                            ${(item.status || 'open').toUpperCase()}
+                                        </span>
+                                    </td>
+                                    <td>${item.keterangan || '-'}</td>
                                 </tr>`;
                         });
                         tbody.innerHTML = rows;
                     })
                     .catch(err => {
-                        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-danger">Gagal mengambil data dari server.</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="11" class="text-center py-3 text-danger">Gagal mengambil data dari server.</td></tr>`;
                     });
             });
         });
-
-        // Script filter stok & modal update stok
-        function filterStockOptions(el) {
-            const kw = el.value.toLowerCase();
-            const opts = document.getElementById('globalStockSelect').options;
-            for (let opt of opts) {
-                opt.style.display = opt.getAttribute('data-keywords').includes(kw) ? "" : "none";
-            }
-        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
